@@ -18,6 +18,13 @@ function acceptedShiftsInit()
         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
         HTTP_GET("wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String  
     });
+    
+    //Add Event Listener to CLEAR Filter Button
+    document.getElementById("btnClear").addEventListener("click", function()
+    {
+        removeItem("ErrorMsg"); 
+        HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String  
+    });
 
     //Start Disabled 
     document.getElementById("inDate").disabled = true;
@@ -135,7 +142,7 @@ function handleError(error)
     {
        var message = "Unknown Error!!, BEEPBORP :/"; 
     }
-console.log("dsdfs");
+
     //Attach message to <p> and attach to body
     var m = document.createTextNode(message);
     p.appendChild(m);
@@ -218,10 +225,9 @@ function displayAccepted(shifts)
     //Loop all results
     for (var i = 0; i < shifts.length; i++)
     {
-
+        
         //Create and attribute rows
         var tr2 = document.createElement("TR");
-        tr2.setAttribute("id", "rw");
         tr2.setAttribute("id", "rw");
         tr2.setAttribute("class", shifts[i].ShiftID);
 
@@ -306,7 +312,8 @@ function displayAccepted(shifts)
 
                     setTimeout(function()
                     {
-                        HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+                        var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
+                        HTTP_GET("wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
                     }, 100);
 
                     displayModal(false); //remove modal and listener
@@ -327,7 +334,8 @@ function displayAccepted(shifts)
                     HTTP_POST("wsSwap.php", item.getAttribute("class"), "swap").then(JSON.parse).catch(handleError);
                     setTimeout(function()
                     {
-                        HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+                        var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
+                        HTTP_GET("wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
                     }, 100);
 
                     displayModal(false); //remove modal and listener
@@ -346,14 +354,6 @@ function removeItem(I)
         element.parentNode.removeChild(element);
     }
 }
-
-function resetListener(ID)
-{
-    var old_element = document.getElementById(ID);
-    var new_element = old_element.cloneNode(true);
-    old_element.parentNode.replaceChild(new_element, old_element);
-}
-
 function displayModal(display)
 {
     if (display)
@@ -363,6 +363,9 @@ function displayModal(display)
     else
     {
         document.getElementById('myModal').style.display = "none";
-        resetListener("option2");
+        
+        var old_element = document.getElementById("option2");
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
     }
 }
