@@ -1,0 +1,82 @@
+html{font-family:"Bliss-Bold","Helvetica Neue",Museo Sans For Dell,Roboto,Arial,sans-serif; background-color: #f4f2f2}
+#wrapper{width: 960px; margin: 0 auto; background-color:white}
+
+td{padding: 0 5 0 10}
+
+.bigBtn{ background-color: #f14a51; color: white; border-radius: 10px; width: 250; height: 90 ; font-size: 25;}
+
+.bigBtn:hover{background-color: #db3b42; border: 2px solid  #f14a51;}
+
+
+
+
+#title{font-size: 60px; text-align: center; color:white; padding: 10px 0px 0px 0px; margin: auto ;}
+
+
+
+#main_heading{font-size: 45px; margin-left: auto ;margin : 40px 0px 0px 0px ; text-align: center;}
+
+#mh{text-align: center}
+
+
+
+nav,header{background-color: #f14a51;}
+
+
+header{height: 100px ; width: auto }
+
+
+table{ width: auto ; margin: auto}
+
+
+
+
+
+
+/* TOP BAR */
+#t{ padding: 0 ; margin:5; margin-left: 210 ; display: inline-block; font-size: 20px;}
+#h{ padding: 0 ; margin: 5; font-size: 20px;}
+
+#logState{float: right ; padding: 0 ; margin: 5; margin-right: 10; display: inline-block; font-size: 20px}
+
+#topBar{ background-color: gainsboro;}
+
+
+
+
+/*
+
+
+html{font-family:"Bliss-Bold","Helvetica Neue",Museo Sans For Dell,Roboto,Arial,sans-serif; background-color: #f4f2f2}
+#wrapper{width: 960px; margin: 0 auto;min-height: 750px; background-color:white}
+
+td{padding: 0 5 0 10}
+
+input{ background-color: #f14a51; color: white; border-radius: 10px; width: 250; height: 90 ; font-size: 25;}
+
+input:hover{background-color: #db3b42; border: 2px solid  #f14a51;}
+
+
+
+
+#title{font-size: 60px; text-align: center; color:white; padding: 10px 0px 0px 0px; margin: auto ;}
+
+
+
+#main_heading{font-size: 45px; margin-left: auto ;margin : 40px 0px 0px 0px ; text-align: center;}
+
+#mh{text-align: center}
+
+
+
+nav,header{background-color: #f14a51;}
+
+
+header{height: 100px ; width: auto }
+
+
+
+
+table{ width: auto ; margin: auto}
+
+#logState{text-align: right ; padding: 0 ; margin: 5; margin-right: 10}*/
