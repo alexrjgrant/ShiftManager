@@ -1,118 +1,90 @@
+//Global Variables
 var varAvShifts = 0;
 var varNumMsgs = 0;
 
-function initTopBar() {
-    //HTTP_GET("test.php?search=0").then(JSON.parse).then(display).catch(handleError); //Promise String  
-
-    var p1 = HTTP_GET("numAvShifts.php").then(JSON.parse).then(numAv2).catch(handleError); //Promise String 
-    var p2 = HTTP_GET("numMsgs.php").then(JSON.parse).then(numMsgs).catch(handleError);
-
-    Promise.all([p1, p2]).then(display3);
-
-    
+//Initialiser
+function initTopBar()
+{
+    //Get rows from database, calculate, display
+    var promise1 = HTTP_GET("numAvShifts.php").then(JSON.parse).then(numAv2).catch(handleError); //Promise String 
+    var promise2 = HTTP_GET("numMsgs.php").then(JSON.parse).then(numMsgs).catch(handleError);
+    Promise.all([promise1, promise2]).then(DisplayTopBar);
 }
-function handleError(error) {
 
-}
-function HTTP_GET(url) {
-    var p = new Promise((resolve, reject) => {
+function handleError(error) //Generic error
+{
+    document.getElementById("t").innerHTML = "ERROR!";
+} 
+// XHR GET
+function HTTP_GET(url)
+{
+    var p = new Promise((resolve, reject) =>
+    {
         var XHR = new XMLHttpRequest();
         XHR.open('GET', url);
 
-        XHR.addEventListener("load", (e) => {
-            if (e.target.status >= 400 && e.target.status <= 599) {
+        XHR.addEventListener("load", (e) =>
+        {
+            if (e.target.status >= 400 && e.target.status <= 599)
+            {
                 reject(e.target.status);
-                console.log("no");
+                console.log("Reject");
             }
-            else {
+            else
+            {
                 resolve(e.target.responseText);
-                console.log("yes");
+                console.log("Resolve");
             }
         });
         XHR.send();
     });
     return p;
 }
-function numAv2(shifts) {
-    var varAccepted = true;
-    //Check for clashing shifts
-    l1: for (var i = 0; i < shifts.length; i++) {
+//Calculate available shifts
+function numAv2(shifts)
+{
 
-        console.log("User ID - " + shifts[i].userID + " : " + curUserID);
+    //loop all rows
+    for (var i = 0; i < shifts.length; i++)
+    {
+        var add1 = true; //Default state
 
-        if (shifts[i].userID == curUserID) //same ID
+        if (shifts[i].userID != curUserID) //Same ID (Fail)
         {
-            console.log("User Clash");
-            continue l1;
-        }
-        
-        l2: for (var ii = 0; ii < shifts.length; ii++) 
-        {
-            
-            console.log("Shift ID - " + i + " : " + ii);
-          
-            if(i == ii)
+            for (var ii = 0; ii < shifts.length; ii++) //Loop all rows
             {
-                console.log("SAME SHIFT");
-
-                if(ii == shifts.length -1) 
-                { 
-                    varAccepted = false; 
-                    console.log("END"); 
-                }
-                else
+                if (shifts[i].Date == shifts[ii].Date && i != ii) //Same date 
                 {
-                    console.log("NEXT");
-                    console.log("------------------------");
+                    if ((shifts[ii].Start >= shifts[i].Start && shifts[ii].Start <= shifts[i].End) ||
+                        (shifts[ii].End   >= shifts[i].Start && shifts[ii].End   <= shifts[i].End)) //Time overlaps (Fail)
+                    {
+                        add1 = false;
+                    }
                 }
-            
-                continue l2;
             }
-
-            console.log(shifts[i].Date + " " + shifts[ii].Date);
-
-            if (shifts[i].Date == shifts[ii].Date) //same date  CHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            {
-                
-                console.log("DATE CLASH");
-
-                console.log(shifts[i].Start + " " + shifts[i].End);
-                console.log(shifts[ii].Start + " " + shifts[ii].End);
-
-                if((shifts[ii].Start >= shifts[i].Start && shifts[ii].Start <= shifts[i].End) || (shifts[ii].End >= shifts[i].Start && shifts[ii].End <= shifts[i].End))
-                {
-                    console.log("TIME CLASH");
-                    console.log("FAIL");
-                    console.log("*****************************************");
-                    
-                    continue l1;
-                }
-
-            }
-            console.log("NEXT");
-            console.log("------------------------");
         }
-        
-        if(varAccepted)
+        else
         {
-        console.log("PASS");
-
-        console.log("--------------------------------------------");
-        ////////PRINT SHIFTS////////
-        varAvShifts++;
+            add1 = false;
+        }
+        //If passes all tests, add1 remains True, one is added to variable
+        if(add1)
+        {
+            varAvShifts++;
         }
     }
-
 }
-function numMsgs(shifts) {
+//calculate num of messages in inbox
+function numMsgs(shifts)
+{
     varNumMsgs = shifts.length;
 }
-function display3(shifts) {
-
-    document.getElementById("t").innerHTML = "Available : <b>" + varAvShifts + "</b> | Messages : <b>" + varNumMsgs + "</b>";
+//display totals
+function DisplayTopBar(shifts)
+{
     var d = new Date();
-    document.getElementById("t").innerHTML += " | Updated : " + "<b>" + d.toLocaleTimeString() + "</b>";
+
+    var varTopBar = document.getElementById("t");
+
+    varTopBar.innerHTML = `Available : <b> ${varAvShifts} </b> | Messages : <b> ${varNumMsgs} </b> | Updated : <b> ${d.toLocaleTimeString()} </b>`;
 }
-
-
-
