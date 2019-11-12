@@ -2,11 +2,13 @@
 
 session_start();
 
+//Input
 $userID  = $_SESSION["userID"];
-$shiftID = $_GET["shiftID"];
+$shiftID = $_POST["shiftID"];
 
 include 'snippets/conn.php'; //Connect to Database
 
+//Select Statement
 $rows        = "*";
 $tables      = "USERS";
 $conditions  = "userID =:uID";
@@ -16,6 +18,7 @@ $userQ->bindParam(":uID", $userID);
 $userQ->execute();
 $cUser = $userQ->fetch();
 
+//Select Statement
 $rows        = "*";
 $tables      = "SHIFTS";
 $conditions  = "ShiftID =:sID";
@@ -25,16 +28,15 @@ $shiftQ->bindParam(":sID", $shiftID);
 $shiftQ->execute();
 $cShift = $shiftQ->fetch();
 
-if ($cUser) {
-    if ($cShift) {
-        if ($cShift["Available"] == 1) {
-            ////////////CHECK SAME SHIFT
-            //TRY TO DATE CHECK HERE!
-            
-            //get date and times of clicked shift
-            
-            //loop currrent shifts results
-            
+if ($cUser) //If user logged in
+{ 
+    if ($cShift) //if shift existed
+    {
+        if ($cShift["Available"] == 1) //if shift is available
+        {
+            $update = true;
+                        
+            //Select statemtent
             $rows          = "*";
             $tables        = "SHIFTS";
             $conditions    = "userID =:uID";
@@ -43,52 +45,71 @@ if ($cUser) {
             $allCurShiftsQ->bindParam(":uID", $userID);
             $allCurShiftsQ->execute();
             
+            //loop users currrent shifts
             while ($allCurShifts = $allCurShiftsQ->fetch()) {
-                if ($allCurShifts["ShiftID"] != $shiftID) {
-                    if ($allCurShifts["Date"] == $cShift["Date"]) {
-                        // if ((shifts[ii].Start >= shifts[i].Start && shifts[ii].Start <= shifts[i].End) || 
-                        //     (shifts[ii].End >= shifts[i].Start && shifts[ii].End <= shifts[i].End))
-                        
-                        // if($allCurShifts["Start"]
-                        echo "D - \n";
-                        
-                        // if((strtotime($allCurShifts["Start"]) >= strtotime($cShift["Start"]) && strtotime($allCurShifts["Start"]) >= strtotime($cShift["End"])) || 
-                        //    (strtotime($allCurShifts["End"]) >= strtotime($cShift["Start"]) && strtotime($allCurShifts["End"]) >= strtotime($cShift["End"])) )
-                        
+                
+                //if not comparing same shifts
+                if ($allCurShifts["ShiftID"] != $shiftID) 
+                {
+                    //if same date
+                    if ($allCurShifts["Date"] == $cShift["Date"]) 
+                    {
+                        //convert to time format
                         $pS = strtotime($cShift["Start"]);
                         $pE = strtotime($cShift["End"]);
                         $S  = strtotime($allCurShifts["Start"]);
                         $E  = strtotime($allCurShifts["End"]);
-                        
-                        // echo $cShift["Start"] . " : " . $cShift["End"]."\n ----";
-                        // print "\n";
-                        // echo $allCurShifts["Start"] . " : " . $allCurShifts["End"]. "\n___ ";
-                        
-                        
-                        // if(($pS >= $S && $pS <= $E) || ($pE >= $S && $pE <= $E))
-                        if (($pE <= $S) or ($pS >= $E)) {
+
+                        //if times do not overlap
+                        if (($pE <= $S) or ($pS >= $E)) 
+                        {
+                            //Alter database
                             $update = $conn->prepare("UPDATE SHIFTS SET userID =:uID, Available = 0 WHERE ShiftID = :sID");
                             $update->bindParam(":sID", $shiftID);
                             $update->bindParam(":uID", $userID);
                             $update->execute();
-                        } else {
-                            header("HTTP/1.1 400 Bad Request");
-                            echo "CLASH"; ///////DEL
+                            echo "pass";
+                        } 
+                        else
+                        {
+                                //error time clash
+                                $update = false;
+                                header("HTTP/1.1 400 Bad Request");
                         }
-                        
+                            
                     }
                 }
             }
-        } else {
+
+            if($update)
+            {
+                //Alter database
+                $update = $conn->prepare("UPDATE SHIFTS SET userID =:uID, Available = 0 WHERE ShiftID = :sID");
+                $update->bindParam(":sID", $shiftID);
+                $update->bindParam(":uID", $userID);
+                $update->execute();
+                echo "pass";
+            }
+
+
+
+        } 
+        else 
+        {
+            $update = false;
             header("HTTP/1.1 400 Bad Request");
         }
-    } else {
+    } 
+    else 
+    {
+        $update = false;
         header("HTTP/1.1 400 Bad Request");
     }
-} else {
+} 
+else 
+{
+    $update = false;
     header("HTTP/1.1 401 Unauthorized");
 }
-
-
 
 ?>

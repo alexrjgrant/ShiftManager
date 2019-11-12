@@ -165,7 +165,6 @@ function HTTP_POST(URL, ID)
 
 function displayAvailableShifts(shifts)
 {
-
     removeItem("table");
     var t = document.createElement("TABLE"); //Create Table
     t.setAttribute("id", "table"); //Set table ID
@@ -181,11 +180,10 @@ function displayAvailableShifts(shifts)
         tr.appendChild(th);
     });
 
-    t.appendChild(tr); //Add row to table
+    document.getElementById("noRes").style.display = "block";
 
     for (var i = 0; i < shifts.length; i++)
     {
-
         var printShift = true;
 
         console.log("User ID - " + shifts[i].userID + " : " + curUserID);
@@ -194,19 +192,20 @@ function displayAvailableShifts(shifts)
         {
             for (var ii = 0; ii < shifts.length; ii++)
             {
-
                 console.log("Shift ID - " + i + " : " + ii);
-
                 console.log(shifts[i].Date + " " + shifts[ii].Date);
 
                 if (shifts[i].Date == shifts[ii].Date && i != ii) //same date  CHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 {
                     console.log("DATE CLASH");
-
                     console.log(shifts[i].Start + " " + shifts[i].End);
                     console.log(shifts[ii].Start + " " + shifts[ii].End);
 
-                    if ((shifts[ii].Start >= shifts[i].Start && shifts[ii].Start <= shifts[i].End) || (shifts[ii].End >= shifts[i].Start && shifts[ii].End <= shifts[i].End))
+                    if (shifts[ii].End <= shifts[i].Start || shifts[ii].Start >= shifts[i].End)
+                    {
+                        //working
+                    }
+                    else
                     {
                         console.log("TIME CLASH");
                         console.log("FAIL");
@@ -217,27 +216,29 @@ function displayAvailableShifts(shifts)
                 console.log("NEXT");
                 console.log("------------------------");
             }
-
         }
         else
         {
             console.log("User Clash");
             printShift = false;
         }
-
         if (printShift)
         {
             ////////PRINT SHIFTS////////
-            
+
+            document.getElementById("noRes").style.display = "none";
+
+            t.appendChild(tr); //Add row to table
+
             var tr2 = document.createElement("TR");
             tr2.setAttribute("id", "rw");
 
             tr2.setAttribute("id", "rw");
-            tr2.setAttribute("class", shifts[i].id);
+            tr2.setAttribute("class", shifts[i].ShiftID);
 
             var varSID = shifts[i].ShiftID;
             var varDate = shifts[i].Date;
-
+ 
             var d = new Date(Date.parse(varDate));
             var weekday = new Array(7);
             weekday[0] = "Sunday";
@@ -270,33 +271,13 @@ function displayAvailableShifts(shifts)
 
             t.appendChild(tr2);
 
-            ////////////////////////
         }
     }
 
-
-
     document.getElementById("returndiv").appendChild(t);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Loop displayed rows
-document.querySelectorAll('#rw').forEach(item =>
+    //Loop displayed rows
+    document.querySelectorAll('#rw').forEach(item =>
     {
         //Add Click Listener to all Rows
         item.addEventListener('click', event =>
@@ -308,56 +289,30 @@ document.querySelectorAll('#rw').forEach(item =>
             var varShiftEnd = item.getElementsByTagName("td")[4].innerHTML;
 
             //Alter Modal
-            document.getElementById('warning2').style.display = "none";
             document.getElementById('shiftDate').innerHTML = `${varShiftDate} (${varShiftDay})`
             document.getElementById('shiftTime').innerHTML = `${varShiftStart} - ${varShiftEnd}`
 
-        
-                //Alter modal text
-                document.getElementById('warning1').innerHTML = "  !!!"
+            //Alter modal text
+            document.getElementById('warning1').innerHTML = "Are you sure? Once accepted, the shift is your responsibillity"
 
-                displayModal(true); //Show updated modal
+            displayModal(true); //Show updated modal
 
-                //Confirm button listener
-                document.getElementById('option2').addEventListener("click", () =>
+            //Confirm button listener
+            document.getElementById('option2').addEventListener("click", () =>
+            {
+                alert(item.getAttribute("class"))
+                HTTP_POST("wsClaimShift.php", item.getAttribute("class")).then(JSON.parse).catch(handleError); //Promise String 
+
+                setTimeout(function()
                 {
-                    HTTP_POST("wsClaimShift.php", item.getAttribute("class")).then(JSON.parse).catch(handleError); //Promise String 
+                    var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
+                    HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+                }, 100);
 
-                    setTimeout(function()
-                    {
-                        var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-                        HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
-                    }, 100);
-
-                    displayModal(false); //remove modal and listener
-                });            
+                displayModal(false); //remove modal and listener
+            });
         });
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // document.querySelectorAll('#rw').forEach(item => {
-    //     item.addEventListener('click', event => {
-    //         alert(item);
-    //     })
-    // })
-
 }
 
 function removeItem(I)
@@ -378,7 +333,7 @@ function displayModal(display)
     else
     {
         document.getElementById('myModal').style.display = "none";
-        
+
         var old_element = document.getElementById("option2");
         var new_element = old_element.cloneNode(true);
         old_element.parentNode.replaceChild(new_element, old_element);

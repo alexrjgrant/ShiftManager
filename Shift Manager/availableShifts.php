@@ -124,6 +124,10 @@
 
             <br>
 
+            <h2 id = "noRes" style="text-align: center;"> No Results </h2>
+
+            <br>
+
             <div id="returndiv"></div>
 
 
