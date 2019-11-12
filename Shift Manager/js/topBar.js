@@ -6,12 +6,12 @@ var varNumMsgs = 0;
 function initTopBar()
 {
     //Get rows from database, calculate, display
-    var promise1 = HTTP_GET("numAvShifts.php").then(JSON.parse).then(numAv2).catch(handleError); //Promise String 
-    var promise2 = HTTP_GET("numMsgs.php").then(JSON.parse).then(numMsgs).catch(handleError);
+    var promise1 = HTTP_GET("numAvShifts.php").then(JSON.parse).then(numAv2).catch(handleErrorTB); //Promise String 
+    var promise2 = HTTP_GET("numMsgs.php").then(JSON.parse).then(numMsgs).catch(handleErrorTB);
     Promise.all([promise1, promise2]).then(DisplayTopBar);
 }
 
-function handleError(error) //Generic error
+function handleErrorTB(error) //Generic error
 {
     document.getElementById("t").innerHTML = "ERROR!";
 } 

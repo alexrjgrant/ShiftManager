@@ -13,6 +13,7 @@
     <script type='text/javascript' src='js/topBar.js'></script>
 
     <link rel="stylesheet" type="text/css" href="css/main.css"><!--Includes CSS File-->
+    <link rel="stylesheet" type="text/css" href="css/modal.css"><!--Includes CSS File-->
 
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"> <!-- Set Favicon -->
 
@@ -135,6 +136,28 @@
         {
             echo"Please Log In";
         } ?>
+
+
+        <!-- The Modal -->
+<div id="myModal" class="modal">
+
+<!-- Modal content -->
+<div class="modal-content">
+    <div id = "mc">
+  <span class="close">&times;</span>
+    <h2 id = "modalHead" >Please confirm selection</h2>
+    <p id = "warning1"></p>
+    <p id = "shiftDate"> </p>
+    <p id = "shiftTime"></p>
+    <p id = "warning2"></p>
+    <input type="button" id = option1 value="Exit">
+    <input type="button" id = option2 value="Confirm">
+    </div>
+</div>
+
+</div>
+
+
     </div>
     <!--Body Wrapper-->
 </body>
@@ -145,4 +168,4 @@
 </script>
 
 </html>
-<!--Index Page-->
+<!--Index Page--> 

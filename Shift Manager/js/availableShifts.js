@@ -3,7 +3,7 @@ function availableShiftsInit()
     var d = new Date();
     document.getElementById("t").innerHTML += " | Updated : ";
     document.getElementById("t").innerHTML += "<b>" + d.toLocaleTimeString() + "</b>";
-    HTTP_GET("wsAvailableShifts.php?search=0").then(JSON.parse).then(numAv).catch(handleError); //Promise String
+    HTTP_GET("wsAvailableShifts.php?search=0").then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String
 
 
     document.getElementById("btnFilter").addEventListener("click", function()
@@ -12,7 +12,7 @@ function availableShiftsInit()
         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString();
 
 
-        HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(numAv).catch(handleError); //Promise String  
+        HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String  
 
 
     });
@@ -139,7 +139,7 @@ function HTTP_GET(url)
     return p;
 }
 
-function HTTP_POST(URL, ID, MODE)
+function HTTP_POST(URL, ID)
 {
     var p = new Promise((resolve, reject) =>
     {
@@ -158,12 +158,12 @@ function HTTP_POST(URL, ID, MODE)
                 resolve(e.target.responseText);
             }
         });
-        XHR.send("shiftID=" + ID + "&mode=" + MODE);
+        XHR.send("shiftID=" + ID);
     });
     return p;
 }
 
-function numAv(shifts)
+function displayAvailableShifts(shifts)
 {
 
     removeItem("table");
@@ -279,6 +279,79 @@ function numAv(shifts)
     document.getElementById("returndiv").appendChild(t);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Loop displayed rows
+document.querySelectorAll('#rw').forEach(item =>
+    {
+        //Add Click Listener to all Rows
+        item.addEventListener('click', event =>
+        {
+            //Get data from table row
+            var varShiftDate = item.getElementsByTagName("td")[1].innerHTML
+            var varShiftDay = item.getElementsByTagName("td")[2].innerHTML.substr(0, 3);
+            var varShiftStart = item.getElementsByTagName("td")[3].innerHTML;
+            var varShiftEnd = item.getElementsByTagName("td")[4].innerHTML;
+
+            //Alter Modal
+            document.getElementById('warning2').style.display = "none";
+            document.getElementById('shiftDate').innerHTML = `${varShiftDate} (${varShiftDay})`
+            document.getElementById('shiftTime').innerHTML = `${varShiftStart} - ${varShiftEnd}`
+
+        
+                //Alter modal text
+                document.getElementById('warning1').innerHTML = "  !!!"
+
+                displayModal(true); //Show updated modal
+
+                //Confirm button listener
+                document.getElementById('option2').addEventListener("click", () =>
+                {
+                    HTTP_POST("wsClaimShift.php", item.getAttribute("class")).then(JSON.parse).catch(handleError); //Promise String 
+
+                    setTimeout(function()
+                    {
+                        var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
+                        HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+                    }, 100);
+
+                    displayModal(false); //remove modal and listener
+                });            
+        });
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // document.querySelectorAll('#rw').forEach(item => {
     //     item.addEventListener('click', event => {
     //         alert(item);
@@ -296,182 +369,18 @@ function removeItem(I)
     }
 }
 
-
-
-
-//function init()
-//{    
-//    var d = new Date();
-//    document.getElementById("t").innerHTML += " | Updated : " ;
-//    document.getElementById("t").innerHTML += "<b>" + d.toLocaleTimeString() + "</b>";
-//    HTTP_GET("test.php").then(JSON.parse).then(display).catch(handleError); //Promise String
-//}
-//function handleError(error)
-//{    
-//    removeItem("ErrorMsg");
-//    
-//    var Err = document.getElementById("error");
-//
-//    var message = "";
-//    
-//    var p = document.createElement("P");
-//    p.setAttribute("id", "ErrorMsg");
-//    
-//    if(error == 400)
-//    {
-//        message = "Error - Check if shift is still available";
-//    }
-//    if(error == 404)
-//    { 
-//        message = "No Results Found";
-//    }
-//     if(error == 414)
-//    {
-//        message = "Error (Length Exceeded) - Edit Search Term And Try Again";
-//    }
-//    if(error == 405)
-//    {
-//        message = "Error (Wrong Method) - Search Using GET Method Only";
-//    }
-//    
-//    var m = document.createTextNode(message);
-//    p.appendChild(m);
-//    document.getElementById("returndiv").appendChild(p);
-//}
-//
-//function HTTP_GET(url) 
-//{
-//    var p = new Promise((resolve,reject)=>
-//            { 
-//                var XHR = new XMLHttpRequest();
-//                XHR.open('GET', url);
-//        
-//                XHR.addEventListener("load", (e)=> 
-//                {              
-//                    if(e.target.status>=400 && e.target.status<=599)
-//                    {
-//                        reject(e.target.status); 
-//                        console.log("no");
-//                    } 
-//                    else 
-//                    {
-//                        resolve(e.target.responseText);
-//                         console.log("yes");
-//                    }
-//                });
-//                XHR.send();
-//            });
-//    return p;
-//}
-//
-//function display(shifts)
-//{
-//    var t  = document.createElement("TABLE"); //Create Table
-//    t.setAttribute("id", "table"); //Set table ID
-//    
-//    var tr = document.createElement("TR"); //Create Row
-//   
-//    //Set headings
-//    ["Shift ID","Date", "Start Time", "Finish Time", "Supervisor?","Staff Member"].forEach ( heading => 
-//    {
-//        var th = document.createElement("TH");
-//        var textNode = document.createTextNode(heading);
-//        th.appendChild(textNode);
-//        tr.appendChild(th);
-//    });
-//
-//    t.appendChild(tr); //Add row to table
-//    
-//    //Check for clashing shifts
-//    l1: for(i=0;i<shifts.length;i++)
-//    {
-//        console.log(shifts[i].userID + " " + curUserID);
-//        
-//        if(shifts[i].userID == curUserID) //same ID
-//        {
-//                console.log("User Clash");
-//                continue l1;
-//        }
-//        if(shifts[i].userID != curUserID)
-//        {
-//            for(ii=0;ii<shifts.length;ii++)
-//            {
-//                console.log(shifts[i].Date+" "+shifts[ii].Date);
-//                
-//                if(i != ii)
-//                {
-//                    if(shifts[i].Date == shifts[ii].Date) //same date  CHANGE!!!
-//                    {
-//                        console.log("Shift Clash");
-//                        continue l1;                            
-//                    }
-//                }
-//            }
-//        }  
-//        ////////PRINT SHIFTS////////
-//        var tr2 = document.createElement("TR");
-//        
-//        tr2.setAttribute("id", "rw");
-//        tr2.setAttribute("class", shifts[i].id);
-//        
-//        var varSID = shifts[i].ShiftID;
-//        var varDate  = shifts[i].Date;
-//        var varStart = shifts[i].Start;
-//        var varEnd = shifts[i].End;
-//        var varUID = shifts[i].Firstname + " " + shifts[i].Surname;
-//        var varUSER = shifts[i].userID;
-//        var varS = "No";
-//        if(shifts[i].Supervisor == 1)
-//        {
-//            varS = "Yes"
-//        }
-//        
-//        [varSID,varDate,varStart,varEnd,varS,varUID].forEach ( data => 
-//        {
-//            var td = document.createElement("TD");
-//            var textNode2 = document.createTextNode(data);
-//            td.appendChild(textNode2);
-//            tr2.appendChild(td);
-//        });
-//        
-//     /////event listeners on rows
-//            tr2.addEventListener("click",()=>
-//            {            
-//                document.getElementById('myModal').style.display = "block";
-//                
-//                document.getElementById("edit").addEventListener("click",()=>
-//                {
-//                    document.getElementById("main_heading").innerHTML = varSID;
-//                    //edit Function
-//                    //trans to form.
-//                    
-//                    window.location="/editShift.php?date="+varDate+"&start="+varStart+"&end="+varEnd+"&sup="+varS+"&uID="+varUSER+"&u="+varUID+"&sID="+varSID;
-//                });
-//                
-//                document.getElementById("delete").addEventListener("click",()=>
-//                {
-//                   if (confirm(`Are you sure? Once deleted, the shift cannot be recovered\n\n DATE : ${varDate} \n TIME : ${varStart} - ${varEnd} `))
-//                    {           
-//                       //dellll
-//                        HTTP_DEL("wsDelete.php",varSID).catch(handleError);
-//                        HTTP_GET("wsShifts.php?all=1").then(JSON.parse).then(displayAllShifts).catch(handleError); //Promise String
-//                    }
-//                });
-//            });
-//            
-//        t.appendChild(tr2);
-//    }
-//        
-//     document.getElementById("returndiv").appendChild(t);
-//    
-//}
-//
-//function removeItem(I)
-//{
-//    if(document.getElementById(I))
-//        {
-//            var element = document.getElementById(I);
-//            element.parentNode.removeChild(element);
-//        }
-//}
-//
+function displayModal(display)
+{
+    if (display)
+    {
+        document.getElementById('myModal').style.display = "block";
+    }
+    else
+    {
+        document.getElementById('myModal').style.display = "none";
+        
+        var old_element = document.getElementById("option2");
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+    }
+}
