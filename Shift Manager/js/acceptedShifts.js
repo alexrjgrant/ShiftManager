@@ -169,9 +169,7 @@ function HTTP_GET(url)
                 console.log("yes");
             }
         });
-        XHR.onprogress = function () {
-            console.log('LOADING: ', XHR.status);
-          };
+       
         XHR.send();
         
     });
@@ -225,7 +223,7 @@ function displayAccepted(shifts)
     //Loop all results
     for (var i = 0; i < shifts.length; i++)
     {
-        
+
         //Create and attribute rows
         var tr2 = document.createElement("TR");
         tr2.setAttribute("id", "rw");
