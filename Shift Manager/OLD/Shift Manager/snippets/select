@@ -1,8 +1,0 @@
-$rows        = "";
-$tables      = "";
-$conditions  = " =:";
-$orderRowRow = "";
-$select = $conn->prepare("SELECT $rows FROM $tables WHERE $conditions");
-$select -> bindParam(":", $);
-$select -> execute();
-$ =  $select->fetch();

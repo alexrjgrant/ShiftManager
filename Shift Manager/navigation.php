@@ -6,9 +6,7 @@
 
 <?php if(isset($_SESSION["userID"])) { ?>
     
-<head>
-
-  
+<head>  
     
     <meta charset="utf-8"> <!--Set Charset-->
     
@@ -17,10 +15,6 @@
     <link rel="stylesheet" type="text/css" href="css/navi.css"><!--Includes CSS File-->
 
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"> <!--Set Favicon-->
-    
-    
-    
-    
 
     <title>Staff Manager</title> <!--Page Title-->
  
