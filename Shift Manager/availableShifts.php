@@ -11,6 +11,7 @@
     
     <script type='text/javascript' src='js/availableShifts.js'></script>
     <script type='text/javascript' src='js/topBar.js'></script>
+    <script type='text/javascript' src='js/JQ.js'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/main.css"><!--Includes CSS File-->
     <link rel="stylesheet" type="text/css" href="css/modal.css"><!--Includes CSS File-->
@@ -50,13 +51,16 @@
             </div>
             <div id="filterDiv">
 
+            <table>
+                    <tr>
+                        <th id="filterHeader" colspan="4">Filters</th> <span class="close" id="closeFilter">×</span>
+                    </tr>
+                </table>
+
                 <form id="formFilter">
 
                     <table>
-                        <tr>
-                            <th id="filterHeader" colspan="4">Filters</th>
-                        </tr>
-
+                    
                         <tr>
                             <td>Date</td>
                             <td><input class="inWidth" type="date" name="dateStart"></td>
@@ -116,6 +120,20 @@
 
                         <input type="button" name="search" value="FILTER" id="btnFilter" class="btnFC">
                     </div>
+
+                    <br>
+
+                    <div id="sd">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Search</strong> </td>
+                                    <td> <input id="SEARCH"> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
 
 
                 </form>

@@ -12,6 +12,7 @@
 
     <script type='text/javascript' src='js/acceptedShifts.js'></script>
     <script type='text/javascript' src='js/topBar.js'></script>
+    <script type='text/javascript' src='js/JQ.js'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <!--Includes CSS File-->
@@ -127,10 +128,10 @@
 
                         <input type="button" name="search" value="FILTER" id="btnFilter" class="btnFC">
                     </div>
+                   
                     <br>
 
                     <div id="sd">
-
                         <table>
                             <tbody>
                                 <tr>
@@ -139,8 +140,6 @@
                                 </tr>
                             </tbody>
                         </table>
-
-
                     </div>
 
                 </form>
