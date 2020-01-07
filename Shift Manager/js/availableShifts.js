@@ -180,55 +180,16 @@ function displayAvailableShifts(shifts)
         tr.appendChild(th);
     });
 
+    t.appendChild(tr); //Add row to table
+
     document.getElementById("noRes").style.display = "block";
 
     for (var i = 0; i < shifts.length; i++)
-    {
-        var printShift = true;
-
-        console.log("User ID - " + shifts[i].userID + " : " + curUserID);
-
-        if (shifts[i].userID != curUserID) //same ID
-        {
-            for (var ii = 0; ii < shifts.length; ii++)
-            {
-                console.log("Shift ID - " + i + " : " + ii);
-                console.log(shifts[i].Date + " " + shifts[ii].Date);
-
-                if (shifts[i].Date == shifts[ii].Date && i != ii) //same date  CHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                {
-                    console.log("DATE CLASH");
-                    console.log(shifts[i].Start + " " + shifts[i].End);
-                    console.log(shifts[ii].Start + " " + shifts[ii].End);
-
-                    if (shifts[ii].End <= shifts[i].Start || shifts[ii].Start >= shifts[i].End)
-                    {
-                        //working
-                    }
-                    else
-                    {
-                        console.log("TIME CLASH");
-                        console.log("FAIL");
-                        console.log("*****************************************");
-                        printShift = false;
-                    }
-                }
-                console.log("NEXT");
-                console.log("------------------------");
-            }
-        }
-        else
-        {
-            console.log("User Clash");
-            printShift = false;
-        }
-        if (printShift)
-        {
+    { 
+        
             ////////PRINT SHIFTS////////
 
             document.getElementById("noRes").style.display = "none";
-
-            t.appendChild(tr); //Add row to table
 
             var tr2 = document.createElement("TR");
             tr2.setAttribute("id", "rw");
@@ -271,10 +232,11 @@ function displayAvailableShifts(shifts)
 
             t.appendChild(tr2);
 
-        }
+        
     }
 
     document.getElementById("returndiv").appendChild(t);
+
 
     //Loop displayed rows
     document.querySelectorAll('#rw').forEach(item =>
@@ -313,7 +275,51 @@ function displayAvailableShifts(shifts)
             });
         });
     });
+
+
+    setTimeout(function()
+    {
+        HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(removeClash).catch(handleError);
+    }, 50);
+    
+
+
 }
+
+function removeClash(acceptedShifts) {
+
+    document.querySelectorAll('#rw').forEach(item => 
+    {
+        var remove = false;
+
+        for (var i = 0; i < acceptedShifts.length; i++)
+        {
+            //Get data from table row
+            var varShiftDate  = item.getElementsByTagName("td")[1].innerHTML;
+            var varShiftStart = item.getElementsByTagName("td")[3].innerHTML;
+            var varShiftEnd   = item.getElementsByTagName("td")[4].innerHTML;
+
+            console.log(acceptedShifts[i].Date +" - "+varShiftDate);
+
+            if(acceptedShifts[i].Date == varShiftDate)
+            {
+                console.log("DATE clash"); console.log(acceptedShifts[i].Start +" : "+ acceptedShifts[i].End); console.log(varShiftStart +" : "+ varShiftEnd);
+
+                if((acceptedShifts[i].Start <= varShiftEnd) && (acceptedShifts[i].End >= varShiftStart))
+                {
+                    console.log("TIME clash REMOVE");
+                    remove = true;
+                }
+                else{console.log("PASS");}console.log("NEXT");
+            }
+        }
+        if(remove)
+        {
+            item.parentNode.removeChild(item);
+        }
+    });
+}
+
 
 function removeItem(I)
 {

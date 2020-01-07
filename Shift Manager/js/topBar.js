@@ -1,12 +1,12 @@
 //Global Variables
-var varAvShifts = 0;
+var nxtShift;
 var varNumMsgs = 0;
 
 //Initialiser
 function initTopBar()
 {
     //Get rows from database, calculate, display
-    var promise1 = HTTP_GET("numAvShifts.php").then(JSON.parse).then(numAv2).catch(handleErrorTB); //Promise String 
+    var promise1 = HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayNext).catch(handleErrorTB); //Promise String 
     var promise2 = HTTP_GET("numMsgs.php").then(JSON.parse).then(numMsgs).catch(handleErrorTB);
     Promise.all([promise1, promise2]).then(DisplayTopBar);
 }
@@ -41,38 +41,15 @@ function HTTP_GET(url)
     return p;
 }
 //Calculate available shifts
-function numAv2(shifts)
+function displayNext(shifts)
 {
 
-    //loop all rows
-    for (var i = 0; i < shifts.length; i++)
-    {
-        var add1 = true; //Default state
+    var d = new Date();
+    var e = new Date(shifts[0].Date);
+    
+    nxtShift = (e-d) / (1000 * 60 * 60 * 24);
 
-        if (shifts[i].userID != curUserID) //Same ID (Fail)
-        {
-            for (var ii = 0; ii < shifts.length; ii++) //Loop all rows
-            {
-                if (shifts[i].Date == shifts[ii].Date && i != ii) //Same date 
-                {
-                    if ((shifts[ii].Start >= shifts[i].Start && shifts[ii].Start <= shifts[i].End) ||
-                        (shifts[ii].End   >= shifts[i].Start && shifts[ii].End   <= shifts[i].End)) //Time overlaps (Fail)
-                    {
-                        add1 = false;
-                    }
-                }
-            }
-        }
-        else
-        {
-            add1 = false;
-        }
-        //If passes all tests, add1 remains True, one is added to variable
-        if(add1)
-        {
-            varAvShifts++;
-        }
-    }
+
 }
 //calculate num of messages in inbox
 function numMsgs(shifts)
@@ -86,5 +63,5 @@ function DisplayTopBar(shifts)
 
     var varTopBar = document.getElementById("t");
 
-    varTopBar.innerHTML = `Available : <b> ${varAvShifts} </b> | Messages : <b> ${varNumMsgs} </b> | Updated : <b> ${d.toLocaleTimeString()} </b>`;
+    varTopBar.innerHTML = `Next Shift : <b> ${nxtShift} </b> | Messages : <b> ${varNumMsgs} </b> | Updated : <b> ${d.toLocaleTimeString()} </b>`;
 }

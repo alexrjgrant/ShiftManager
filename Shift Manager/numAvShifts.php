@@ -17,7 +17,6 @@ $cUser =  $userQ->fetch();
 
 if($cUser)
 {
-
         $d = date("Ymd");
         $rows       = "*";
         $tables     = "SHIFTS";
