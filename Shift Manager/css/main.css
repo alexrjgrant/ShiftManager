@@ -26,7 +26,7 @@ table{ width: auto ; margin: auto}
 #topBar{ background-color: gainsboro;}
 
 
-#filterDiv{background-color: #f2f2f2;border-style: solid; border-width: thin;border-color: darkgrey;padding: 15; width: 450;margin: auto; height: 190}
+#filterDiv{background-color: #f2f2f2;border-style: solid; border-width: thin;border-color: darkgrey;padding: 15; width: 150px;margin: auto; height: 35px;}
 
 
 #ErrorMsg{text-align: center; font-size: 25; font-weight:500}
@@ -73,3 +73,9 @@ table{ width: auto ; margin: auto}
 }
 #rw:nth-child(even) {background-color: #f2f2f2;}
 #rw:hover {background-color: #ddd; border: 5px solid #f14a51}
+
+
+
+
+#formFilter{display: none;}
+#closeFilter{display: none;}

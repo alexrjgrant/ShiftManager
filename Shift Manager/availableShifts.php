@@ -11,7 +11,7 @@
     
     <script type='text/javascript' src='js/availableShifts.js'></script>
     <script type='text/javascript' src='js/topBar.js'></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/main.css"><!--Includes CSS File-->
     <link rel="stylesheet" type="text/css" href="css/modal.css"><!--Includes CSS File-->
 
