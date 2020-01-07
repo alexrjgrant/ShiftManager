@@ -7,18 +7,22 @@
 
 <head>
 
-    <meta charset="utf-8"> <!--Set Charset-->
-    
+    <meta charset="utf-8">
+    <!--Set Charset-->
+
     <script type='text/javascript' src='js/acceptedShifts.js'></script>
     <script type='text/javascript' src='js/topBar.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/main.css"><!--Includes CSS File-->
-    <link rel="stylesheet" type="text/css" href="css/modal.css"><!--Includes CSS File-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!--Includes CSS File-->
+    <link rel="stylesheet" type="text/css" href="css/modal.css">
+    <!--Includes CSS File-->
 
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"> <!-- Set Favicon -->
 
-    <title>Staff Manager</title> <!--Page Title-->
- 
+    <title>Staff Manager</title>
+    <!--Page Title-->
+
 </head>
 
 
@@ -48,21 +52,21 @@
             <div id="fDiv">
 
             </div>
-            
+
             <div id="filterDiv">
 
-                
 
-<table>
-<tr>
-                            <th id="filterHeader" colspan="4">Filters</th> <span class="close" id = "closeFilter">×</span>
-                        </tr>
-</table>
 
-<form id="formFilter">
+                <table>
+                    <tr>
+                        <th id="filterHeader" colspan="4">Filters</th> <span class="close" id="closeFilter">×</span>
+                    </tr>
+                </table>
+
+                <form id="formFilter">
 
                     <table>
-                       
+
 
                         <tr>
                             <td>Date</td>
@@ -123,7 +127,21 @@
 
                         <input type="button" name="search" value="FILTER" id="btnFilter" class="btnFC">
                     </div>
+                    <br>
 
+                    <div id="sd">
+
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Search</strong> </td>
+                                    <td> <input id="SEARCH"> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                    </div>
 
                 </form>
 
@@ -145,24 +163,24 @@
         } ?>
 
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
 
-  <!-- Modal content -->
-  <div class="modal-content">
-      <div id = "mc">
-    <span class="close">&times;</span>
-      <h2 id = "modalHead" >Please confirm selection</h2>
-      <p id = "warning1"></p>
-      <p id = "shiftDate"> </p>
-      <p id = "shiftTime"></p>
-      <p id = "warning2"></p>
-      <input type="button" id = option1 value="Exit">
-      <input type="button" id = option2 value="Confirm">
-      </div>
-  </div>
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div id="mc">
+                    <span class="close">&times;</span>
+                    <h2 id="modalHead">Please confirm selection</h2>
+                    <p id="warning1"></p>
+                    <p id="shiftDate"> </p>
+                    <p id="shiftTime"></p>
+                    <p id="warning2"></p>
+                    <input type="button" id=option1 value="Exit">
+                    <input type="button" id=option2 value="Confirm">
+                </div>
+            </div>
 
-</div>
+        </div>
 
     </div>
     <!--Body Wrapper-->
