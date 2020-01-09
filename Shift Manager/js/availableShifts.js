@@ -78,6 +78,8 @@ function availableShiftsInit()
 
         }
     });
+
+    filterJQ();
 }
 
 function handleError(error)
@@ -165,6 +167,7 @@ function HTTP_POST(URL, ID)
 
 function displayAvailableShifts(shifts)
 {
+    alert("dsfgjh");
     removeItem("table");
     var t = document.createElement("TABLE"); //Create Table
     t.setAttribute("id", "table"); //Set table ID
@@ -179,11 +182,15 @@ function displayAvailableShifts(shifts)
         th.appendChild(textNode);
         tr.appendChild(th);
     });
-
+    
     t.appendChild(tr); //Add row to table
-
+ 
+    var tb = document.createElement("tbody"); //Create table body (enables search)
+    tb.setAttribute("id", "tb");
+    t.appendChild(tb);
+    
     document.getElementById("noRes").style.display = "block";
-
+   
     for (var i = 0; i < shifts.length; i++)
     { 
         
@@ -230,11 +237,12 @@ function displayAvailableShifts(shifts)
                 tr2.appendChild(td);
             });
 
-            t.appendChild(tr2);
+            tb.appendChild(tr2);
 
-        
+                   
     }
 
+    t.appendChild(tb);
     document.getElementById("returndiv").appendChild(t);
 
 
@@ -277,10 +285,10 @@ function displayAvailableShifts(shifts)
     });
 
 
-    setTimeout(function()
-    {
-        HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(removeClash).catch(handleError);
-    }, 50);
+    // setTimeout(function()
+    // {
+    //     HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(removeClash).catch(handleError);
+    // }, 50);
     
 
 

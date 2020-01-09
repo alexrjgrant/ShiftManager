@@ -45,12 +45,42 @@ function displayNext(shifts)
 {
 
     var d = new Date();
+
     var e = new Date(shifts[0].Date);
-    
-    nxtShift = (e-d) / (1000 * 60 * 60 * 24);
+    var weekday = new Array(7);
+        weekday[0] = "Sunday";
+        weekday[1] = "Monday";
+        weekday[2] = "Tuesday";
+        weekday[3] = "Wednesday";
+        weekday[4] = "Thursday";
+        weekday[5] = "Friday";
+        weekday[6] = "Saturday";
+    var varDay = weekday[e.getDay()];
 
+    var numDays = ((e-d) / (1000 * 60 * 60 * 24));
 
+    if(numDays > 7)
+    {    
+        nxtShift = Math.ceil(numDays) + "Days";
+    }
+    if(numDays <= 7)
+    {
+        if(numDays == 1)
+        {    
+            nxtShift = "Tomorrow";
+        }
+        if(numDays == 0)
+        {    
+            nxtShift = "Today";
+        }
+        else
+        {
+            nxtShift = varDay;
+        }
+    }
 }
+   
+
 //calculate num of messages in inbox
 function numMsgs(shifts)
 {
