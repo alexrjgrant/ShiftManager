@@ -1,7 +1,0 @@
-<div id = "topBar">
-    <span id = "h" ><a href="navigation.php">HOME</a></span>
-    <span id = "t">Available : <b></b></span>
-
-    <p id = "logState"><b></b>. <a href="logout.php">Logout</a></p>
-</div>
-             
