@@ -61,7 +61,7 @@ function displayNext(shifts)
 
     if(numDays > 7)
     {    
-        nxtShift = Math.ceil(numDays) + "Days";
+        nxtShift = Math.ceil(numDays) + " Days";
     }
     if(numDays <= 7)
     {

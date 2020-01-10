@@ -255,16 +255,7 @@ function displayAccepted(shifts)
         var varDate = shifts[i].Date;
 
         //Get day of week from date
-        var d = new Date(Date.parse(varDate));
-        var weekday = new Array(7);
-        weekday[0] = "Sunday";
-        weekday[1] = "Monday";
-        weekday[2] = "Tuesday";
-        weekday[3] = "Wednesday";
-        weekday[4] = "Thursday";
-        weekday[5] = "Friday";
-        weekday[6] = "Saturday";
-        var varDay = weekday[d.getDay()];
+        var varDay = dayOfWeek(varDate);
 
         var varStart = shifts[i].Start.substr(0, 5); //Shorten time format
         var varEnd = shifts[i].End.substr(0, 5);
@@ -336,7 +327,7 @@ t.appendChild(tb);
                 //Confirm button listener
                 document.getElementById('option2').addEventListener("click", () =>
                 {
-                    HTTP_POST("wsSwap.php", item.getAttribute("class"), "swap").then(JSON.parse).catch(handleError);
+                    HTTP_POST("wsSwap.php", item.getAttribute("class"), "swap").catch(handleError);
                     setTimeout(function()
                     {
                         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
@@ -348,29 +339,4 @@ t.appendChild(tb);
             }
         });
     });
-}
-
-/////////Time Savers
-function removeItem(I)
-{
-    if (document.getElementById(I))
-    {
-        var element = document.getElementById(I);
-        element.parentNode.removeChild(element);
-    }
-}
-function displayModal(display)
-{
-    if (display)
-    {
-        document.getElementById('myModal').style.display = "block";
-    }
-    else
-    {
-        document.getElementById('myModal').style.display = "none";
-        
-        var old_element = document.getElementById("option2");
-        var new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-    }
 }

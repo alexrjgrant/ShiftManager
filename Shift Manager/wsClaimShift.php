@@ -63,12 +63,7 @@ if ($cUser) //If user logged in
                         //if times do not overlap
                         if (($pE <= $S) or ($pS >= $E)) 
                         {
-                            //Alter database
-                            $update = $conn->prepare("UPDATE SHIFTS SET userID =:uID, Available = 0 WHERE ShiftID = :sID");
-                            $update->bindParam(":sID", $shiftID);
-                            $update->bindParam(":uID", $userID);
-                            $update->execute();
-                            echo "pass";
+                            
                         } 
                         else
                         {
@@ -80,19 +75,6 @@ if ($cUser) //If user logged in
                     }
                 }
             }
-
-            if($update)
-            {
-                //Alter database
-                $update = $conn->prepare("UPDATE SHIFTS SET userID =:uID, Available = 0 WHERE ShiftID = :sID");
-                $update->bindParam(":sID", $shiftID);
-                $update->bindParam(":uID", $userID);
-                $update->execute();
-                echo "pass";
-            }
-
-
-
         } 
         else 
         {
@@ -111,5 +93,14 @@ else
     $update = false;
     header("HTTP/1.1 401 Unauthorized");
 }
+
+if($update)
+            {
+                //Alter database
+                $update = $conn->prepare("UPDATE SHIFTS SET userID =:uID, Available = 0 WHERE ShiftID = :sID");
+                $update->bindParam(":sID", $shiftID);
+                $update->bindParam(":uID", $userID);
+                $update->execute();
+            }
 
 ?>

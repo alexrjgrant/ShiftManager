@@ -1,26 +1,36 @@
 function availableShiftsInit()
 {
+    //Construct Top Bar
     var d = new Date();
     document.getElementById("t").innerHTML += " | Updated : ";
     document.getElementById("t").innerHTML += "<b>" + d.toLocaleTimeString() + "</b>";
+
+    //Get and Display Current Shifts From Database
     HTTP_GET("wsAvailableShifts.php?search=0").then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String
 
-
+    ////Filter Search/////
+    //Add Event Listener to Filter Button
     document.getElementById("btnFilter").addEventListener("click", function()
     {
         removeItem("ErrorMsg");
-        var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString();
 
-
+        var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
         HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String  
-
-
     });
 
+    //Add Event Listener to CLEAR Filter Button
+    document.getElementById("btnClear").addEventListener("click", function()
+    {
+        removeItem("ErrorMsg");
+        HTTP_GET("wsAvailableShifts.php?search=0").then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String  
+    });
+
+    //Start Disabled 
     document.getElementById("inDate").disabled = true;
     document.getElementById("inStart").disabled = true;
     document.getElementById("inEnd").disabled = true;
 
+    //Change Disabled setting of Inputs
     document.getElementById("selectDate").addEventListener("change", function()
     {
 
@@ -79,6 +89,25 @@ function availableShiftsInit()
         }
     });
 
+    ////Modal Settings////
+    //Get the <span> element that closes the modal
+    var modalExit = document.getElementsByClassName("close")[0];
+
+    //When the user clicks on (x), close the modal
+    modalExit.onclick = function() { displayModal(false); }
+
+    //When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event)
+    {
+        if (event.target == document.getElementById('myModal'))
+        {
+            displayModal(false);
+        }
+    }
+
+    //On click, modal exit button
+    document.getElementById('option1').addEventListener("click", () => {  displayModal(false);  });
+
     filterJQ();
 }
 
@@ -87,33 +116,17 @@ function handleError(error)
     removeItem("ErrorMsg");
     removeItem("table");
 
-    var Err = document.getElementById("error");
-
     var message = "";
 
-    var p = document.createElement("P");
-    p.setAttribute("id", "ErrorMsg");
 
-    if (error == 400)
-    {
-        message = "Error - Check if shift is still available";
-    }
-    if (error == 404)
-    {
-        message = "No Results Found";
-    }
-    if (error == 414)
-    {
-        message = "Error (Length Exceeded) - Edit Search Term And Try Again";
-    }
-    if (error == 405)
-    {
-        message = "Error (Wrong Method) - Search Using GET Method Only";
-    }
+         if (error == 200)  {  console.log("OK 200") }
+    else if (error == 400)  {  message = "Error - Check if shift is still available";  }
+    else if (error == 404)  {  message = "No Results Found";  }
+    else if (error == 414)  {  message = "Error (Length Exceeded) - Edit Search Term And Try Again";  }
+    else if (error == 405)  {  message = "Error (Wrong Method) - Search Using GET Method Only";  }
+    else                    {  message = "Unknown Error"; }
 
-    var m = document.createTextNode(message);
-    p.appendChild(m);
-    document.getElementById("returndiv").appendChild(p);
+    $("#returndiv").append($("<p></p>").text(message + error).attr("id", "ErrorMsg"));
 }
 
 function HTTP_GET(url)
@@ -128,12 +141,11 @@ function HTTP_GET(url)
             if (e.target.status >= 400 && e.target.status <= 599)
             {
                 reject(e.target.status);
-                console.log("no");
             }
             else
             {
+                removeItem("ErrorMsg");
                 resolve(e.target.responseText);
-                console.log("yes");
             }
         });
         XHR.send();
@@ -157,6 +169,7 @@ function HTTP_POST(URL, ID)
             }
             else
             {
+                removeItem("ErrorMsg");
                 resolve(e.target.responseText);
             }
         });
@@ -167,116 +180,60 @@ function HTTP_POST(URL, ID)
 
 function displayAvailableShifts(shifts)
 {
-    alert("dsfgjh");
-    removeItem("table");
-    var t = document.createElement("TABLE"); //Create Table
-    t.setAttribute("id", "table"); //Set table ID
 
-    var tr = document.createElement("TR"); //Create Row
+    removeItem("table");
+
+    $("#returndiv").append($("<table></table>").attr("id", "table"));
+    $("#table").append($("<tbody></table>").attr("id", "tb"));
+    $("#tb").append($("<tr></tr>").attr("id", "tableHeading"));
 
     //Set headings
     ["Shift ID", "Date", "Day", "Start Time", "Finish Time", "Supervisor?"].forEach(heading =>
     {
-        var th = document.createElement("TH");
-        var textNode = document.createTextNode(heading);
-        th.appendChild(textNode);
-        tr.appendChild(th);
+        $("#tableHeading").append($("<th></th>").text(heading));
     });
-    
-    t.appendChild(tr); //Add row to table
- 
-    var tb = document.createElement("tbody"); //Create table body (enables search)
-    tb.setAttribute("id", "tb");
-    t.appendChild(tb);
-    
+
     document.getElementById("noRes").style.display = "block";
-   
-    for (var i = 0; i < shifts.length; i++)
-    { 
-        
-            ////////PRINT SHIFTS////////
 
-            document.getElementById("noRes").style.display = "none";
-
-            var tr2 = document.createElement("TR");
-            tr2.setAttribute("id", "rw");
-
-            tr2.setAttribute("id", "rw");
-            tr2.setAttribute("class", shifts[i].ShiftID);
-
-            var varSID = shifts[i].ShiftID;
-            var varDate = shifts[i].Date;
- 
-            var d = new Date(Date.parse(varDate));
-            var weekday = new Array(7);
-            weekday[0] = "Sunday";
-            weekday[1] = "Monday";
-            weekday[2] = "Tuesday";
-            weekday[3] = "Wednesday";
-            weekday[4] = "Thursday";
-            weekday[5] = "Friday";
-            weekday[6] = "Saturday";
-            var varDay = weekday[d.getDay()];
-
-            var varStart = shifts[i].Start.substr(0, 5);
-            var varEnd = shifts[i].End.substr(0, 5);
-            var varUID = shifts[i].Firstname + " " + shifts[i].Surname;
-            var varUSER = shifts[i].userID;
-            var varS = "No";
-
-            if (shifts[i].Supervisor == 1)
-            {
-                varS = "Yes"
-            }
-
-            [varSID, varDate, varDay, varStart, varEnd, varS].forEach(data =>
-            {
-                var td = document.createElement("TD");
-                var textNode2 = document.createTextNode(data);
-                td.appendChild(textNode2);
-                tr2.appendChild(td);
-            });
-
-            tb.appendChild(tr2);
-
-                   
-    }
-
-    t.appendChild(tb);
-    document.getElementById("returndiv").appendChild(t);
-
-
-    //Loop displayed rows
-    document.querySelectorAll('#rw').forEach(item =>
+    shifts.forEach(shift =>
     {
-        //Add Click Listener to all Rows
-        item.addEventListener('click', event =>
-        {
-            //Get data from table row
-            var varShiftDate = item.getElementsByTagName("td")[1].innerHTML
-            var varShiftDay = item.getElementsByTagName("td")[2].innerHTML.substr(0, 3);
-            var varShiftStart = item.getElementsByTagName("td")[3].innerHTML;
-            var varShiftEnd = item.getElementsByTagName("td")[4].innerHTML;
 
+        ////////PRINT SHIFTS////////
+
+        $("#tb").append($("<tr></tr>").attr("id", "rw").attr("class", shift.ShiftID));
+
+        document.getElementById("noRes").style.display = "none";
+
+        var varSID = shift.ShiftID;
+        var varStart = shift.Start.substr(0, 5);
+        var varEnd = shift.End.substr(0, 5);
+        var varDate = shift.Date;
+        var varDay = dayOfWeek(varDate);
+
+        if (shift.Supervisor == 1){  var varS = "Yes";  }  else  {  var varS = "No";  }
+
+        [varSID, varDate, varDay, varStart, varEnd, varS].forEach(data => { $("." + shift.ShiftID).append($("<td></td>").text(data)); });
+
+        $("." + varSID).click(() =>
+        {
             //Alter Modal
-            document.getElementById('shiftDate').innerHTML = `${varShiftDate} (${varShiftDay})`
-            document.getElementById('shiftTime').innerHTML = `${varShiftStart} - ${varShiftEnd}`
+            document.getElementById('shiftDate').innerHTML = `${varDate} (${varDay})`;
+            document.getElementById('shiftTime').innerHTML = `${varStart} - ${varEnd}`;
 
             //Alter modal text
-            document.getElementById('warning1').innerHTML = "Are you sure? Once accepted, the shift is your responsibillity"
+            document.getElementById('warning1').innerHTML = "Are you sure? Once accepted, the shift is your responsibillity";
 
             displayModal(true); //Show updated modal
 
             //Confirm button listener
             document.getElementById('option2').addEventListener("click", () =>
             {
-                alert(item.getAttribute("class"))
-                HTTP_POST("wsClaimShift.php", item.getAttribute("class")).then(JSON.parse).catch(handleError); //Promise String 
+                HTTP_POST("wsClaimShift.php", varSID).catch(handleError); //Promise String 
 
                 setTimeout(function()
                 {
                     var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-                    HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+                    HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String
                 }, 100);
 
                 displayModal(false); //remove modal and listener
@@ -284,19 +241,15 @@ function displayAvailableShifts(shifts)
         });
     });
 
-
-    // setTimeout(function()
-    // {
-    //     HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(removeClash).catch(handleError);
-    // }, 50);
-    
-
-
+    setTimeout(function()
+    {
+       HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(removeClash).catch(handleError);
+    }, 50);
 }
 
-function removeClash(acceptedShifts) {
-
-    document.querySelectorAll('#rw').forEach(item => 
+function removeClash(acceptedShifts)
+{
+    document.querySelectorAll('#rw').forEach(item =>
     {
         var remove = false;
 
@@ -307,49 +260,30 @@ function removeClash(acceptedShifts) {
             var varShiftStart = item.getElementsByTagName("td")[3].innerHTML;
             var varShiftEnd   = item.getElementsByTagName("td")[4].innerHTML;
 
-            console.log(acceptedShifts[i].Date +" - "+varShiftDate);
+            console.log(acceptedShifts[i].Date + " - " + varShiftDate);
 
-            if(acceptedShifts[i].Date == varShiftDate)
+            if (acceptedShifts[i].Date == varShiftDate)
             {
-                console.log("DATE clash"); console.log(acceptedShifts[i].Start +" : "+ acceptedShifts[i].End); console.log(varShiftStart +" : "+ varShiftEnd);
+                console.log("DATE clash");
+                console.log(acceptedShifts[i].Start + " : " + acceptedShifts[i].End);
+                console.log(varShiftStart + " : " + varShiftEnd);
 
-                if((acceptedShifts[i].Start <= varShiftEnd) && (acceptedShifts[i].End >= varShiftStart))
+                if ((acceptedShifts[i].Start <= varShiftEnd) && (acceptedShifts[i].End >= varShiftStart))
                 {
                     console.log("TIME clash REMOVE");
                     remove = true;
                 }
-                else{console.log("PASS");}console.log("NEXT");
+                else
+                {
+                    console.log("PASS");
+                }
+                console.log("NEXT");
             }
         }
-        if(remove)
+        if (remove)
         {
             item.parentNode.removeChild(item);
         }
     });
 }
 
-
-function removeItem(I)
-{
-    if (document.getElementById(I))
-    {
-        var element = document.getElementById(I);
-        element.parentNode.removeChild(element);
-    }
-}
-
-function displayModal(display)
-{
-    if (display)
-    {
-        document.getElementById('myModal').style.display = "block";
-    }
-    else
-    {
-        document.getElementById('myModal').style.display = "none";
-
-        var old_element = document.getElementById("option2");
-        var new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-    }
-}
