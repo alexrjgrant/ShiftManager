@@ -64,8 +64,7 @@
 
                                     while( $users = $userQ ->fetch())
                                     {
-                                    echo "<option value='".$users['userID']."'>" .   $users['Firstname']." ".$users['Surname'].   "</option>";
-
+                                        echo "<option value='".$users['userID']."'>" .   $users['Firstname']." ".$users['Surname'].   "</option>";
                                     }
 
                                     ?>

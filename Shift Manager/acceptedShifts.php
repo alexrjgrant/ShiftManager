@@ -13,6 +13,7 @@
     <script type='text/javascript' src='js/acceptedShifts.js'></script>
     <script type='text/javascript' src='js/topBar.js'></script>
     <script type='text/javascript' src='js/JQ.js'></script>
+    <script type='text/javascript' src='js/common.js'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <!--Includes CSS File-->
@@ -40,7 +41,7 @@
              ?>
         <main>
 
-            <?php include 'snippets/topBar.php'; ?>
+            <?php include 'snippets/topBar.html'; ?>
 
             <div id="mh">
                 <h4 id="main_heading">Accepted Shifts</h4>

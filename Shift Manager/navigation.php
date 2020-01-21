@@ -28,7 +28,7 @@
 
             <main> 
                 
-                <?php include 'snippets/topBar.php'; ?>
+                <?php include 'snippets/topBar.html'; ?>
                     
                     
                 <div id = "mh">

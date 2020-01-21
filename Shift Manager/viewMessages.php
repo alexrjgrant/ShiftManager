@@ -33,7 +33,7 @@
              ?>
         <main>
 
-            <?php include 'snippets/topBar.php'; ?>
+            <?php include 'snippets/topBar.html'; ?>
 
             <div id="mh">
                 <h4 id="main_heading">Messages</h4>
