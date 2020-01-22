@@ -111,7 +111,10 @@ function allShiftsInit()
     $("#btnDelete").click(()=>{
        
 
-        HTTP_POST_DELETE("wsDelete.php",selectedRows).then(JSON.parse).then(displayAll).catch(handleError); //Promise String   
+        HTTP_POST_DELETE("wsDelete.php",selectedRows).catch(handleError); //Promise String
+
+        //Promise String 
+        setTimeout(function(){ HTTP_GET("wsAllShifts.php?search=0").then(JSON.parse).then(displayAll).catch(handleError);  }, 100);
     });
 
     filterJQ();
@@ -224,7 +227,7 @@ function displayAll(shifts)
     $("#tb").append($("<tr></tr>").attr("id", "tableHeading"));
 
     //Set headings
-    ["Shift ID", "Date", "Day", "Start Time", "Finish Time", "Supervisor?"].forEach(heading =>
+    ["Shift ID", "Date", "Day", "Start Time", "Finish Time", "Staff Member" , "Supervisor?"].forEach(heading =>
     {
         $("#tableHeading").append($("<th></th>").text(heading));
     });
@@ -241,6 +244,12 @@ function displayAll(shifts)
        // document.getElementById("noRes").style.display = "none";
 
         var varSID = shift.ShiftID;
+         
+        if(shift.userID != 0)
+        {
+             var varStaffMember = shift.Firstname + " " + shift.Surname + " (" + shift.userID + ")";
+        }
+        
         var varStart = shift.Start.substr(0, 5);
         var varEnd = shift.End.substr(0, 5);
         var varDate = shift.Date;
@@ -248,11 +257,10 @@ function displayAll(shifts)
 
         if (shift.Supervisor == 1){  var varS = "Yes";  }  else  {  var varS = "No";  }
 
-        [varSID, varDate, varDay, varStart, varEnd, varS].forEach(data => { $("." + shift.ShiftID).append($("<td></td>").text(data)); });
+        [varSID, varDate, varDay, varStart, varEnd, varStaffMember , varS].forEach(data => { $("." + shift.ShiftID).append($("<td></td>").text(data)); });
 
         $("." + varSID).click(() =>
-        {
-
+        { 
             if(!selectedRows.includes(varSID))
             {
                 $("." + varSID).css("background-color", "yellow");
@@ -268,14 +276,7 @@ function displayAll(shifts)
                    selectedRows.splice(selectedRows.indexOf(varSID), 1);
                 }
             }
-            
-
-            
-
-
-
+             
         });
-    });
-
-    
+    }); 
 }

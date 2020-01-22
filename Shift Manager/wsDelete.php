@@ -1,8 +1,8 @@
 <?php
 
     include 'snippets/conn.php'; //Connect to Database
-    $s = $_POST["selectedRows"];
-    $selectedRows = json_decode($s);
+    //$s = $_POST["selectedRows"];
+    $selectedRows = json_decode($_POST["selectedRows"]);
 
     $in = "?";
 
