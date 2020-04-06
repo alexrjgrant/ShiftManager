@@ -2,14 +2,14 @@ function messagesInit() {
     var d = new Date();
     document.getElementById("t").innerHTML += " | Updated : ";
     document.getElementById("t").innerHTML += "<b>" + d.toLocaleTimeString() + "</b>";
-    HTTP_GET("TEST.php?search=0").then(JSON.parse).then(displayMsgs).catch(handleError); //Promise String
+    HTTP_GET("php/TEST.php?search=0").then(JSON.parse).then(displayMsgs).catch(handleError); //Promise String
 
 
     document.getElementById("btnFilter").addEventListener("click", function () {
         removeItem("ErrorMsg");
         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString();
 
-        HTTP_GET("TEST.php?search=1&" + queryString).then(JSON.parse).then(displayMsgs).catch(handleError); //Promise String  
+        HTTP_GET("php/TEST.php?search=1&" + queryString).then(JSON.parse).then(displayMsgs).catch(handleError); //Promise String  
     });
 
     document.getElementById("inDate").disabled = true;

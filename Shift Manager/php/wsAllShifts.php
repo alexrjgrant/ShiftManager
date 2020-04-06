@@ -8,7 +8,7 @@ $search = $_GET["search"];
 
 $userID = $_SESSION["userID"];
     
-include 'snippets/conn.php'; //Connect to Database
+include_once $_SERVER['DOCUMENT_ROOT']."/Shift Manager/snippets/conn.php";
 
 $rows        = "*";
 $tables      = "USERS";

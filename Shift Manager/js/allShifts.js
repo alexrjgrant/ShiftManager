@@ -8,7 +8,7 @@ function allShiftsInit()
     document.getElementById("t").innerHTML += "<b>" + d.toLocaleTimeString() + "</b>";
 
     //Get and Display Current Shifts From Database
-    HTTP_GET("wsAllShifts.php?search=0").then(JSON.parse).then(displayAll).catch(handleError); //Promise String
+    HTTP_GET("php/wsAllShifts.php?search=0").then(JSON.parse).then(displayAll).catch(handleError); //Promise String
 
     ////Filter Search/////
     //Add Event Listener to Filter Button
@@ -17,14 +17,14 @@ function allShiftsInit()
         removeItem("ErrorMsg"); 
         
         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-        HTTP_GET("wsAllShifts.php?search=1" + queryString).then(JSON.parse).then(displayAll).catch(handleError); //Promise String  
+        HTTP_GET("php/wsAllShifts.php?search=1" + queryString).then(JSON.parse).then(displayAll).catch(handleError); //Promise String  
     });
     
     //Add Event Listener to CLEAR Filter Button
     document.getElementById("btnClear").addEventListener("click", function()
     {
         removeItem("ErrorMsg"); 
-        HTTP_GET("wsAllShifts.php?search=0").then(JSON.parse).then(displayAll).catch(handleError); //Promise String  
+        HTTP_GET("php/wsAllShifts.php?search=0").then(JSON.parse).then(displayAll).catch(handleError); //Promise String  
     });
 
     //Start Disabled 
@@ -111,10 +111,10 @@ function allShiftsInit()
     $("#btnDelete").click(()=>{
        
 
-        HTTP_POST_DELETE("wsDelete.php",selectedRows).catch(handleError); //Promise String
+        HTTP_POST_DELETE("php/wsDelete.php",selectedRows).catch(handleError); //Promise String
 
         //Promise String 
-        setTimeout(function(){ HTTP_GET("wsAllShifts.php?search=0").then(JSON.parse).then(displayAll).catch(handleError);  }, 100);
+        setTimeout(function(){ HTTP_GET("php/wsAllShifts.php?search=0").then(JSON.parse).then(displayAll).catch(handleError);  }, 100);
     });
 
     filterJQ();

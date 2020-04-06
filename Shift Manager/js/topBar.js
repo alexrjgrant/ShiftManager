@@ -6,8 +6,8 @@ var varNumMsgs = 0;
 function initTopBar()
 {
     //Get rows from database, calculate, display
-    var promise1 = HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayNext).catch(handleErrorTB); //Promise String 
-    var promise2 = HTTP_GET("numMsgs.php").then(JSON.parse).then(numMsgs).catch(handleErrorTB);
+    var promise1 = HTTP_GET("php/wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayNext).catch(handleErrorTB); //Promise String 
+    var promise2 = HTTP_GET("php/numMsgs.php").then(JSON.parse).then(numMsgs).catch(handleErrorTB);
     Promise.all([promise1, promise2]).then(DisplayTopBar);
 }
 

@@ -7,7 +7,7 @@ function acceptedShiftsInit()
     document.getElementById("t").innerHTML += "<b>" + d.toLocaleTimeString() + "</b>";
 
     //Get and Display Current Shifts From Database
-    HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+    HTTP_GET("php/wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
 
     ////Filter Search/////
     //Add Event Listener to Filter Button
@@ -16,14 +16,14 @@ function acceptedShiftsInit()
         removeItem("ErrorMsg"); 
         
         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-        HTTP_GET("wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String  
+        HTTP_GET("php/wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String  
     });
     
     //Add Event Listener to CLEAR Filter Button
     document.getElementById("btnClear").addEventListener("click", function()
     {
         removeItem("ErrorMsg"); 
-        HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String  
+        HTTP_GET("php/wsAcceptedShifts.php?search=0").then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String  
     });
 
     //Start Disabled 
@@ -304,12 +304,12 @@ t.appendChild(tb);
                 //Confirm button listener
                 document.getElementById('option2').addEventListener("click", () =>
                 {
-                    HTTP_POST("wsSwap.php", item.getAttribute("class"), "claim").then(JSON.parse).catch(handleError); //Promise String 
+                    HTTP_POST("php/wsSwap.php", item.getAttribute("class"), "claim").then(JSON.parse).catch(handleError); //Promise String 
 
                     setTimeout(function()
                     {
                         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-                        HTTP_GET("wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+                        HTTP_GET("php/wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
                     }, 100);
 
                     displayModal(false); //remove modal and listener
@@ -327,11 +327,11 @@ t.appendChild(tb);
                 //Confirm button listener
                 document.getElementById('option2').addEventListener("click", () =>
                 {
-                    HTTP_POST("wsSwap.php", item.getAttribute("class"), "swap").catch(handleError);
+                    HTTP_POST("php/wsSwap.php", item.getAttribute("class"), "swap").catch(handleError);
                     setTimeout(function()
                     {
                         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-                        HTTP_GET("wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+                        HTTP_GET("php/wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
                     }, 100);
 
                     displayModal(false); //remove modal and listener

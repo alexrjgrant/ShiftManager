@@ -6,7 +6,7 @@ function availableShiftsInit()
     document.getElementById("t").innerHTML += " | Updated : <b>" + d.toLocaleTimeString() + "</b>";
 
     ////Get and Display Current Shifts From Database////
-    HTTP_GET("wsAvailableShifts.php?search=0").
+    HTTP_GET("php/wsAvailableShifts.php?search=0").
     then  (JSON.parse).
     then  (displayAvailableShifts).
     catch (handleError); 
@@ -24,7 +24,7 @@ function availableShiftsInit()
         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
         
         //Get and Display Current Shifts From Database (Filtered)
-        HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).
+        HTTP_GET("php/wsAvailableShifts.php?search=1&" + queryString).
         then (JSON.parse).
         then (displayAvailableShifts).
         catch(handleError);   
@@ -36,7 +36,7 @@ function availableShiftsInit()
         removeItem("ErrorMsg");
 
         //Get and Display Current Shifts From Database
-        HTTP_GET("wsAvailableShifts.php?search=0").
+        HTTP_GET("php/wsAvailableShifts.php?search=0").
         then(JSON.parse).
         then(displayAvailableShifts).
         catch(handleError);  
@@ -145,7 +145,7 @@ function handleError(error)
     else if (error == 405)  { var message = "Error (Wrong Method) - Search Using GET Method Only";  }
     else                    { var message = "Unknown Error"; }
 
-    $("#returndiv").append($("<p></p>").text(message).attr("id", "ErrorMsg"));
+    $("#returndiv").append($("<p></p>").text(message + error).attr("id", "ErrorMsg"));
 }
 
 /////////Get JSON From Service/////////
@@ -257,12 +257,12 @@ function displayAvailableShifts(shifts)
             document.getElementById('option2').addEventListener("click", () =>
             {
                 ///Call Post
-                HTTP_POST("wsClaimShift.php", varSID).catch(handleError); //Promise String 
+                HTTP_POST("php/wsClaimShift.php", varSID).catch(handleError); //Promise String 
 
                 setTimeout(()=>
                 {
                     var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-                    HTTP_GET("wsAvailableShifts.php?search=1&" + queryString)
+                    HTTP_GET("php/wsAvailableShifts.php?search=1&" + queryString)
                     .then(JSON.parse)
                     .then(displayAvailableShifts)
                     .catch(handleError); //Promise String
@@ -277,7 +277,7 @@ function displayAvailableShifts(shifts)
     ///Remove Clashing shifts
     setTimeout(()=>
     {
-       HTTP_GET("wsAcceptedShifts.php?search=0")
+       HTTP_GET("php/wsAcceptedShifts.php?search=0")
        .then(JSON.parse)
        .then(removeClash)
        .catch(handleError);
