@@ -36,3 +36,8 @@ function dayOfWeek(varDate)
     weekday[6] = "Saturday";
     return weekday[d.getDay()];
 }
+
+function countRows()
+{
+    return document.querySelectorAll('#rw').length;
+}

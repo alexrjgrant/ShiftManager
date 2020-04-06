@@ -1,28 +1,45 @@
+////////////Init////////////
 function availableShiftsInit()
 {
-    //Construct Top Bar
+    ////Construct Top Bar////
     var d = new Date();
-    document.getElementById("t").innerHTML += " | Updated : ";
-    document.getElementById("t").innerHTML += "<b>" + d.toLocaleTimeString() + "</b>";
+    document.getElementById("t").innerHTML += " | Updated : <b>" + d.toLocaleTimeString() + "</b>";
 
-    //Get and Display Current Shifts From Database
-    HTTP_GET("wsAvailableShifts.php?search=0").then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String
+    ////Get and Display Current Shifts From Database////
+    HTTP_GET("wsAvailableShifts.php?search=0").
+    then  (JSON.parse).
+    then  (displayAvailableShifts).
+    catch (handleError); 
 
-    ////Filter Search/////
+
+
+    ////Filtered Search////
+
     //Add Event Listener to Filter Button
     document.getElementById("btnFilter").addEventListener("click", function()
     {
         removeItem("ErrorMsg");
 
+        //Construct Query From Table Input
         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-        HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String  
+        
+        //Get and Display Current Shifts From Database (Filtered)
+        HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).
+        then (JSON.parse).
+        then (displayAvailableShifts).
+        catch(handleError);   
     });
 
     //Add Event Listener to CLEAR Filter Button
     document.getElementById("btnClear").addEventListener("click", function()
     {
         removeItem("ErrorMsg");
-        HTTP_GET("wsAvailableShifts.php?search=0").then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String  
+
+        //Get and Display Current Shifts From Database
+        HTTP_GET("wsAvailableShifts.php?search=0").
+        then(JSON.parse).
+        then(displayAvailableShifts).
+        catch(handleError);  
     });
 
     //Start Disabled 
@@ -89,7 +106,10 @@ function availableShiftsInit()
         }
     });
 
+
+
     ////Modal Settings////
+
     //Get the <span> element that closes the modal
     var modalExit = document.getElementsByClassName("close")[0];
 
@@ -108,27 +128,27 @@ function availableShiftsInit()
     //On click, modal exit button
     document.getElementById('option1').addEventListener("click", () => {  displayModal(false);  });
 
+    ////Run jQuery Filter for Filter Form
     filterJQ();
 }
 
+///HTTP Error Code Handler///
 function handleError(error)
 {
     removeItem("ErrorMsg");
     removeItem("table");
 
-    var message = "";
+         if (error == 200)  { console.log("OK 200") }
+    else if (error == 400)  { var message = "Error - Check if shift is still available";  }
+    else if (error == 404)  { var message = "No Results Found, Please Check Back Later";  }
+    else if (error == 414)  { var message = "Error (Length Exceeded) - Edit Search Term And Try Again";  }
+    else if (error == 405)  { var message = "Error (Wrong Method) - Search Using GET Method Only";  }
+    else                    { var message = "Unknown Error"; }
 
-
-         if (error == 200)  {  console.log("OK 200") }
-    else if (error == 400)  {  message = "Error - Check if shift is still available";  }
-    else if (error == 404)  {  message = "No Results Found";  }
-    else if (error == 414)  {  message = "Error (Length Exceeded) - Edit Search Term And Try Again";  }
-    else if (error == 405)  {  message = "Error (Wrong Method) - Search Using GET Method Only";  }
-    else                    {  message = "Unknown Error"; }
-
-    $("#returndiv").append($("<p></p>").text(message + error).attr("id", "ErrorMsg"));
+    $("#returndiv").append($("<p></p>").text(message).attr("id", "ErrorMsg"));
 }
 
+/////////Get JSON From Service/////////
 function HTTP_GET(url)
 {
     var p = new Promise((resolve, reject) =>
@@ -153,6 +173,7 @@ function HTTP_GET(url)
     return p;
 }
 
+/////////Post shift selection to ws//////////
 function HTTP_POST(URL, ID)
 {
     var p = new Promise((resolve, reject) =>
@@ -178,32 +199,36 @@ function HTTP_POST(URL, ID)
     return p;
 }
 
+////////Display Returned Shifts/////////
 function displayAvailableShifts(shifts)
 {
-
+    ///Remove double///
     removeItem("table");
 
+    //////Create and Add Table to Page//////// 
     $("#returndiv").append($("<table></table>").attr("id", "table"));
     $("#table").append($("<tbody></table>").attr("id", "tb"));
     $("#tb").append($("<tr></tr>").attr("id", "tableHeading"));
 
-    //Set headings
+    ////Hide table default////
+    $("#tb").hide(); 
+
+    /////Set headings////
     ["Shift ID", "Date", "Day", "Start Time", "Finish Time", "Supervisor?"].forEach(heading =>
     {
         $("#tableHeading").append($("<th></th>").text(heading));
     });
 
-    document.getElementById("noRes").style.display = "block";
-
+    //For Each shift
     shifts.forEach(shift =>
     {
 
         ////////PRINT SHIFTS////////
 
+        ///New Row
         $("#tb").append($("<tr></tr>").attr("id", "rw").attr("class", shift.ShiftID));
 
-        document.getElementById("noRes").style.display = "none";
-
+        //Get Data
         var varSID = shift.ShiftID;
         var varStart = shift.Start.substr(0, 5);
         var varEnd = shift.End.substr(0, 5);
@@ -212,8 +237,10 @@ function displayAvailableShifts(shifts)
 
         if (shift.Supervisor == 1){  var varS = "Yes";  }  else  {  var varS = "No";  }
 
+        //Add data to row
         [varSID, varDate, varDay, varStart, varEnd, varS].forEach(data => { $("." + shift.ShiftID).append($("<td></td>").text(data)); });
 
+        //Row Click Event 
         $("." + varSID).click(() =>
         {
             //Alter Modal
@@ -222,33 +249,45 @@ function displayAvailableShifts(shifts)
 
             //Alter modal text
             document.getElementById('warning1').innerHTML = "Are you sure? Once accepted, the shift is your responsibillity";
-
-            displayModal(true); //Show updated modal
+ 
+            //Show updated modal
+            displayModal(true);
 
             //Confirm button listener
             document.getElementById('option2').addEventListener("click", () =>
             {
+                ///Call Post
                 HTTP_POST("wsClaimShift.php", varSID).catch(handleError); //Promise String 
 
-                setTimeout(function()
+                setTimeout(()=>
                 {
                     var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-                    HTTP_GET("wsAvailableShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAvailableShifts).catch(handleError); //Promise String
+                    HTTP_GET("wsAvailableShifts.php?search=1&" + queryString)
+                    .then(JSON.parse)
+                    .then(displayAvailableShifts)
+                    .catch(handleError); //Promise String
                 }, 100);
-
-                displayModal(false); //remove modal and listener
+                
+                //remove modal and listener
+                displayModal(false); 
             });
         });
     });
 
-    setTimeout(function()
+    ///Remove Clashing shifts
+    setTimeout(()=>
     {
-       HTTP_GET("wsAcceptedShifts.php?search=0").then(JSON.parse).then(removeClash).catch(handleError);
-    }, 50);
+       HTTP_GET("wsAcceptedShifts.php?search=0")
+       .then(JSON.parse)
+       .then(removeClash)
+       .catch(handleError);
+    },30);
+
 }
 
 function removeClash(acceptedShifts)
 {
+    
     document.querySelectorAll('#rw').forEach(item =>
     {
         var remove = false;
@@ -285,5 +324,20 @@ function removeClash(acceptedShifts)
             item.parentNode.removeChild(item);
         }
     });
+
+
+    if(countRows() > 0)
+    {
+        $("#tb").show();
+        $("#filterDiv").show(); 
+    }
+    else
+    {
+        handleError(404);
+        $("#tb").hide();
+        $("#filterDiv").hide(); 
+    }
+
+
 }
 

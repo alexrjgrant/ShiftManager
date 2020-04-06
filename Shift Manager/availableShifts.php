@@ -143,7 +143,7 @@
 
             <br>
 
-            <h2 id = "noRes" style="text-align: center;"> No Results </h2>
+            <!-- <h2 id = "noRes" style="text-align: center;"> No Results </h2> -->
 
             <br>
 
