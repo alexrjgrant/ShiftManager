@@ -5,7 +5,7 @@ session_start();
 $un = htmlentities($_POST["un"]);
 $pw = htmlentities($_POST["pw"]);
 
-include_once $_SERVER['DOCUMENT_ROOT']."/Shift Manager/snippets/conn.php";
+include_once $_SERVER['DOCUMENT_ROOT']."/ShiftManager/snippets/conn.php";
 
 $login = $conn -> prepare("SELECT * FROM USERS WHERE Username=:username AND Password=:password");
 
@@ -24,7 +24,7 @@ else //If match found
 	$_SESSION["userID"] = $row["userID"];
 	$_SESSION["isadmin" ] = $row["Admin"];
 	
-	header("Location: navigation.php");
+	header("Location: /ShiftManager/navigation.php");
 
 	
 }
