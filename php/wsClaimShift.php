@@ -6,7 +6,7 @@ session_start();
 $userID  = $_SESSION["userID"];
 $shiftID = $_POST["shiftID"];
 
-include_once $_SERVER['DOCUMENT_ROOT']."/Shift Manager/snippets/conn.php";
+include_once $_SERVER['DOCUMENT_ROOT']."/ShiftManager/snippets/conn.php";
 
 //Select Statement
 $rows        = "*";
