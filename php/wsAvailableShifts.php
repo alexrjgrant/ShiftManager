@@ -139,7 +139,7 @@ if($cUser)
                 {
                     if (($cStart <= $aEnd) && ($cEnd >= $aStart))
                     {
-                        echo  $cValue["ShiftID"]. " - " .$aValue["ShiftID"]."<br>";
+                       // echo  $cValue["ShiftID"]. " - " .$aValue["ShiftID"]."<br>";
                         
                         unset($avShifts[$key]);
                     }
@@ -152,11 +152,9 @@ if($cUser)
 
 
 
-
-
     if($avShifts)
     {
-        echo json_encode($avShifts);
+        echo json_encode(array_values($avShifts));
     }
     else
     {
