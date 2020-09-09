@@ -1,0 +1,80 @@
+html{font-family:"Bliss-Bold","Helvetica Neue",Museo Sans For Dell,Roboto,Arial,sans-serif; background-color: #f4f2f2}
+#wrapper{width: 960px; margin: 0 auto; background-color:white}
+
+td{padding: 0 5 0 10}
+
+#title{font-size: 60px; text-align: center; color:white; padding: 10px 0px 0px 0px; margin: auto ;}
+
+#main_heading{font-size: 45px; margin-left: auto ;margin : 40px 0px 0px 0px ; text-align: center;}
+
+#mh{text-align: center}
+
+nav,header{background-color: #f14a51;}
+
+
+header{height: 100px ; width: auto }
+
+
+table{ width: auto ; margin: auto}
+
+/* TOP BAR */
+#t{ padding: 0 ; margin:5; margin-left: 210 ; display: inline-block; font-size: 20px;}
+#h{ padding: 0 ; margin: 5; font-size: 20px;}
+
+#logState{float: right ; padding: 0 ; margin: 5; margin-right: 10; display: inline-block; font-size: 20px}
+
+#topBar{ background-color: gainsboro;}
+
+
+#filterDiv{background-color: #f2f2f2;border-style: solid; border-width: thin;border-color: darkgrey;padding: 15; width: 150px;margin: auto; height: 35px;}
+
+
+#ErrorMsg{text-align: center; font-size: 25; font-weight:500}
+
+
+.inWidth{width: 130}
+#selectOrder{width: 90}
+#selectO{width: 90}
+
+.btnFC{font-size: 15 ;background-color: #f14a51; color: white; border-radius: 10px; width: 150; height: 30;margin-top: 5;margin-left: 20}
+
+#btnClear{width: 80px ; margin: auto;}
+
+#btnsdiv{width:255; margin: auto; }
+
+
+
+
+#filterHeader{padding-bottom: 15px ; font-size: 25px; }
+
+
+
+#returndiv table,#returndiv td,#returndiv th {
+  border: 1px solid black;
+}
+#returndiv table {
+  border-collapse: collapse;
+  width: 90%;
+ 
+}
+
+#returndiv th {
+  background-color: #f14a51;
+  color: white;
+  height: 50px;
+}
+#returndiv th,#returndiv td {
+ padding: 10px;
+    padding-right:20px;
+    padding-left:20px;
+ border: 1px solid #dddddd;
+    text-align: center;
+    height:50px ;
+}
+#rw:nth-child(even) {background-color: #f2f2f2;}
+#rw:hover {background-color: #ddd; border: 5px solid #f14a51}
+
+#formFilter{display: none;}
+#closeFilter{display: none;}
+
+main{min-height: 600px;}
