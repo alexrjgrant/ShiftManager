@@ -11,8 +11,6 @@ function availableShiftsInit()
     then  (displayAvailableShifts).
     catch (handleError); 
 
-
-
     ////Filtered Search////
 
     //Add Event Listener to Filter Button
@@ -202,8 +200,6 @@ function HTTP_POST(URL, ID)
 ////////Display Returned Shifts/////////
 function displayAvailableShifts(shifts)
 {
-
-
     ///Remove double///
     removeItem("table");
 
@@ -212,23 +208,16 @@ function displayAvailableShifts(shifts)
     $("#table").append($("<tbody></table>").attr("id", "tb"));
     $("#tb").append($("<tr></tr>").attr("id", "tableHeading"));
 
-    ////Hide table default////
-  
-
     /////Set headings////
     ["Shift ID", "Date", "Day", "Start Time", "Finish Time", "Supervisor?"].forEach(heading =>
     {
         $("#tableHeading").append($("<th></th>").text(heading));
     });
 
-
     //For Each shift
     shifts.forEach(shift =>
     {
-
         ////////PRINT SHIFTS////////
-
-        
 
         //Get Data
         var varSID = shift.ShiftID;
@@ -278,104 +267,7 @@ function displayAvailableShifts(shifts)
         //Add data to row
         [varSID, varDate, varDay, varStart, varEnd, varS].forEach(data => { $("." + shift.ShiftID).append($("<td></td>").text(data)); });
 
-        // //Row Click Event 
-        // $("." + varSID).click(() =>
-        // {
-        //     //Alter Modal
-        //     document.getElementById('shiftDate').innerHTML = `${varDate} (${varDay})`;
-        //     document.getElementById('shiftTime').innerHTML = `${varStart} - ${varEnd}`;
-
-        //     //Alter modal text
-        //     document.getElementById('warning1').innerHTML = "Are you sure? Once accepted, the shift is your responsibillity";
- 
-        //     //Show updated modal
-        //     displayModal(true);
-
-        //     //Confirm button listener
-        //     document.getElementById('option2').addEventListener("click", () =>
-        //     {
-        //         ///Call Post
-        //         HTTP_POST("php/wsClaimShift.php", varSID).catch(handleError); //Promise String 
-
-        //         setTimeout(()=>
-        //         {
-        //             var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
-        //             HTTP_GET("php/wsAvailableShifts.php?search=1&" + queryString)
-        //             .then(JSON.parse)
-        //             .then(displayAvailableShifts)
-        //             .catch(handleError); //Promise String
-        //         }, 100);
-                
-        //         //remove modal and listener
-        //         displayModal(false); 
-        //     });
-        // });
+        
     });
 
-    ///Remove Clashing shifts
-    // setTimeout(()=>
-    // {
-    //    HTTP_GET("php/wsAcceptedShifts.php?search=0")
-    //    .then(JSON.parse)
-    //    .then(removeClash)
-    //    .catch(handleError);
-    // },30);
-
 }
-
-// function removeClash(acceptedShifts)
-// {
-    
-//     document.querySelectorAll('#rw').forEach(item =>
-//     {
-//         var remove = false;
-
-//         for (var i = 0; i < acceptedShifts.length; i++)
-//         {
-//             //Get data from table row
-//             var varShiftDate  = item.getElementsByTagName("td")[1].innerHTML;
-//             var varShiftStart = item.getElementsByTagName("td")[3].innerHTML;
-//             var varShiftEnd   = item.getElementsByTagName("td")[4].innerHTML;
-
-//             console.log(acceptedShift.Date + " - " + varShiftDate);
-
-//             if (acceptedShift.Date == varShiftDate)
-//             {
-//                 console.log("DATE clash");
-//                 console.log(acceptedShift.Start + " : " + acceptedShift.End);
-//                 console.log(varShiftStart + " : " + varShiftEnd);
-
-//                 if ((acceptedShift.Start <= varShiftEnd) && (acceptedShift.End >= varShiftStart))
-//                 {
-//                     console.log("TIME clash REMOVE");
-//                     remove = true;
-//                 }
-//                 else
-//                 {
-//                     console.log("PASS");
-//                 }
-//                 console.log("NEXT");
-//             }
-//         }
-//         if (remove)
-//         {
-//             item.parentNode.removeChild(item);
-//         }
-//     });
-
-
-//     if(countRows() > 0)
-//     {
-//         $("#tb").show();
-//         $("#filterDiv").show(); 
-//     }
-//     else
-//     {
-//         handleError(404);
-//         $("#tb").hide();
-//         $("#filterDiv").hide(); 
-//     }
-
-
-// }
-

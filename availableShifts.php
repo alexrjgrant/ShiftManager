@@ -24,7 +24,7 @@
 </head>
 
 
-<body onload="availableShiftsInit(); initTopBar();">
+<body onload="availableShiftsInit(); ">
     <!--.-->
 
     <div id="wrapper">

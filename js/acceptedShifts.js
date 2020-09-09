@@ -14,7 +14,6 @@ function acceptedShiftsInit()
     document.getElementById("btnFilter").addEventListener("click", function()
     {
         removeItem("ErrorMsg"); 
-        
         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
         HTTP_GET("php/wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String  
     });
@@ -228,20 +227,20 @@ function displayAccepted(shifts)
     t.appendChild(tb);
 
     //Loop all results
-    for (var i = 0; i < shifts.length; i++)
+    shifts.forEach(shift =>
     {
 
         //Create and attribute rows
         var tr2 = document.createElement("TR");
         tr2.setAttribute("id", "rw");
-        tr2.setAttribute("class", shifts[i].ShiftID);
+        tr2.setAttribute("class", shift.ShiftID);
 
         //Colour according to availabillity
-        if (shifts[i].Available == 1)
+        if (shift.Available == 1)
         {
             tr2.style.backgroundColor = "orange";
         }
-        else if (shifts[i].Available == 0)
+        else if (shift.Available == 0)
         {
             tr2.style.backgroundColor = null;
         }
@@ -251,16 +250,16 @@ function displayAccepted(shifts)
         }
 
         ////Asign data to variables/
-        var varSID = shifts[i].ShiftID;
-        var varDate = shifts[i].Date;
+        var varSID = shift.ShiftID;
+        var varDate = shift.Date;
 
         //Get day of week from date
         var varDay = dayOfWeek(varDate);
 
-        var varStart = shifts[i].Start.substr(0, 5); //Shorten time format
-        var varEnd = shifts[i].End.substr(0, 5);
+        var varStart = shift.Start.substr(0, 5); //Shorten time format
+        var varEnd = shift.End.substr(0, 5);
        
-        if (shifts[i].Supervisor == 1) { varS = "Yes" } else { var varS = "No"; } //Convert to language
+        if (shift.Supervisor == 1) { varS = "Yes" } else { var varS = "No"; } //Convert to language
 
         ////Add data from variables to rows
         [varSID, varDate, varDay, varStart, varEnd, varS].forEach(data =>
@@ -271,30 +270,19 @@ function displayAccepted(shifts)
             tr2.appendChild(td);
         });
 
-        tb.appendChild(tr2); //add row to table
-    }
-t.appendChild(tb);
-    document.getElementById("returndiv").appendChild(t); //add table to body
 
-    //Loop displayed rows
-    document.querySelectorAll('#rw').forEach(item =>
-    {
-        //Add Click Listener to all Rows
-        item.addEventListener('click', event =>
+
+
+        tr2.addEventListener("click",()=>
         {
-            //Get data from table row
-            var varShiftDate = item.getElementsByTagName("td")[1].innerHTML
-            var varShiftDay = item.getElementsByTagName("td")[2].innerHTML.substr(0, 3);
-            var varShiftStart = item.getElementsByTagName("td")[3].innerHTML;
-            var varShiftEnd = item.getElementsByTagName("td")[4].innerHTML;
 
             //Alter Modal
             document.getElementById('warning2').style.display = "none";
-            document.getElementById('shiftDate').innerHTML = `${varShiftDate} (${varShiftDay})`
-            document.getElementById('shiftTime').innerHTML = `${varShiftStart} - ${varShiftEnd}`
+            document.getElementById('shiftDate').innerHTML = `${varDate} (${varDay})`
+            document.getElementById('shiftTime').innerHTML = `${varStart} - ${varEnd}`
 
             //If shift currently up for cover
-            if (item.style.backgroundColor == "orange")
+            if (shift.Available == 1)
             {
                 //Alter modal text
                 document.getElementById('warning1').innerHTML = "Are you sure? The shift will no longer be available to cover"
@@ -304,13 +292,11 @@ t.appendChild(tb);
                 //Confirm button listener
                 document.getElementById('option2').addEventListener("click", () =>
                 {
-                    HTTP_POST("php/wsSwap.php", item.getAttribute("class"), "claim").then(JSON.parse).catch(handleError); //Promise String 
-
-                    setTimeout(function()
+                    HTTP_POST("php/wsSwap.php", shift.ShiftID, "claim").then(function()
                     {
                         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
                         HTTP_GET("php/wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
-                    }, 100);
+                    }).catch(handleError); //Promise String 
 
                     displayModal(false); //remove modal and listener
                 });
@@ -327,16 +313,196 @@ t.appendChild(tb);
                 //Confirm button listener
                 document.getElementById('option2').addEventListener("click", () =>
                 {
-                    HTTP_POST("php/wsSwap.php", item.getAttribute("class"), "swap").catch(handleError);
-                    setTimeout(function()
+                    HTTP_POST("php/wsSwap.php", shift.ShiftID, "swap").then(function()
                     {
                         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
                         HTTP_GET("php/wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
-                    }, 100);
+                    }).catch(handleError); //Promise String 
 
                     displayModal(false); //remove modal and listener
                 });
             }
+
+
+
+
         });
+
+
+
+
+
+        tb.appendChild(tr2); //add row to table
     });
+
+    t.appendChild(tb);
+
+
+    document.getElementById("returndiv").appendChild(t); //add table to body
+
+
+
+
+
+
+
+
+
+
+
+    
+     
+            
+
+            
+     
+    
 }
+
+
+
+
+
+
+
+
+
+
+// ////Display Returned Data
+// function displayAccepted(shifts)
+// {
+//     ////Create table////
+//     removeItem("table"); //remove table if exists to avoid duplication
+//     var t = document.createElement("TABLE"); //Create Table
+//     t.setAttribute("id", "table"); //Set table ID
+
+//     var tr = document.createElement("TR"); //Create Row
+
+//     //Set headings
+//     ["Shift ID", "Date", "Day", "Start Time", "Finish Time", "Supervisor?"].forEach(heading =>
+//     {
+//         var th = document.createElement("TH");
+//         var textNode = document.createTextNode(heading);
+//         th.appendChild(textNode);
+//         tr.appendChild(th);
+//     });
+
+//     t.appendChild(tr); //Add row to table
+
+//     var tb = document.createElement("tbody"); //Create table body (enables search)
+//     tb.setAttribute("id", "tb");
+//     t.appendChild(tb);
+
+//     //Loop all results
+//     for (var i = 0; i < shifts.length; i++)
+//     {
+
+//         //Create and attribute rows
+//         var tr2 = document.createElement("TR");
+//         tr2.setAttribute("id", "rw");
+//         tr2.setAttribute("class", shift.ShiftID);
+
+//         //Colour according to availabillity
+//         if (shift.Available == 1)
+//         {
+//             tr2.style.backgroundColor = "orange";
+//         }
+//         else if (shift.Available == 0)
+//         {
+//             tr2.style.backgroundColor = null;
+//         }
+//         else
+//         {
+//             tr2.style.backgroundColor = "red";
+//         }
+
+//         ////Asign data to variables/
+//         var varSID = shift.ShiftID;
+//         var varDate = shift.Date;
+
+//         //Get day of week from date
+//         var varDay = dayOfWeek(varDate);
+
+//         var varStart = shift.Start.substr(0, 5); //Shorten time format
+//         var varEnd = shift.End.substr(0, 5);
+       
+//         if (shift.Supervisor == 1) { varS = "Yes" } else { var varS = "No"; } //Convert to language
+
+//         ////Add data from variables to rows
+//         [varSID, varDate, varDay, varStart, varEnd, varS].forEach(data =>
+//         {
+//             var td = document.createElement("TD");
+//             var textNode2 = document.createTextNode(data);
+//             td.appendChild(textNode2);
+//             tr2.appendChild(td);
+//         });
+
+//         tb.appendChild(tr2); //add row to table
+//     }
+// t.appendChild(tb);
+//     document.getElementById("returndiv").appendChild(t); //add table to body
+
+//     //Loop displayed rows
+//     document.querySelectorAll('#rw').forEach(item =>
+//     {
+//         //Add Click Listener to all Rows
+//         item.addEventListener('click', event =>
+//         {
+//             //Get data from table row
+//             var varShiftDate = item.getElementsByTagName("td")[1].innerHTML
+//             var varShiftDay = item.getElementsByTagName("td")[2].innerHTML.substr(0, 3);
+//             var varShiftStart = item.getElementsByTagName("td")[3].innerHTML;
+//             var varShiftEnd = item.getElementsByTagName("td")[4].innerHTML;
+
+//             //Alter Modal
+//             document.getElementById('warning2').style.display = "none";
+//             document.getElementById('shiftDate').innerHTML = `${varShiftDate} (${varShiftDay})`
+//             document.getElementById('shiftTime').innerHTML = `${varShiftStart} - ${varShiftEnd}`
+
+//             //If shift currently up for cover
+//             if (item.style.backgroundColor == "orange")
+//             {
+//                 //Alter modal text
+//                 document.getElementById('warning1').innerHTML = "Are you sure? The shift will no longer be available to cover"
+
+//                 displayModal(true); //Show updated modal
+
+//                 //Confirm button listener
+//                 document.getElementById('option2').addEventListener("click", () =>
+//                 {
+//                     HTTP_POST("php/wsSwap.php", item.getAttribute("class"), "claim").then(JSON.parse).catch(handleError); //Promise String 
+
+//                     setTimeout(function()
+//                     {
+//                         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
+//                         HTTP_GET("php/wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+//                     }, 100);
+
+//                     displayModal(false); //remove modal and listener
+//                 });
+
+//             }
+//             //If asking for shift cover
+//             else
+//             {
+//                 //Alter modal text
+//                 document.getElementById('warning1').innerHTML = "Are you sure? If not accepted, the shift remains your responsibility!";
+            
+//                 displayModal(true); //Show updated modal
+
+//                 //Confirm button listener
+//                 document.getElementById('option2').addEventListener("click", () =>
+//                 {
+//                     HTTP_POST("php/wsSwap.php", item.getAttribute("class"), "swap").catch(handleError);
+//                     setTimeout(function()
+//                     {
+//                         var queryString = new URLSearchParams(new FormData(document.getElementById("formFilter"))).toString(); //Construct Query From Table Input
+//                         HTTP_GET("php/wsAcceptedShifts.php?search=1&" + queryString).then(JSON.parse).then(displayAccepted).catch(handleError); //Promise String
+//                     }, 100);
+
+//                     displayModal(false); //remove modal and listener
+//                 });
+//             }
+//         });
+//     });
+// }

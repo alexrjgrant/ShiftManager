@@ -6,7 +6,7 @@ $userID = $_SESSION["userID"];
 $shiftID = $_POST["shiftID"]; 
 $mode = $_POST["mode"];
 
-include_once $_SERVER['DOCUMENT_ROOT']."/Shift Manager/snippets/conn.php";
+include_once $_SERVER['DOCUMENT_ROOT']."/ShiftManager/snippets/conn.php";
 
 
 $rows        = "*";
