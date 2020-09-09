@@ -8,7 +8,7 @@ $search = $_GET["search"];
 
 $userID = $_SESSION["userID"];
     
-include_once $_SERVER['DOCUMENT_ROOT']."/Shift Manager/snippets/conn.php";
+include_once $_SERVER['DOCUMENT_ROOT']."/ShiftManager/snippets/conn.php";
 
 $rows        = "*";
 $tables      = "USERS";
@@ -21,8 +21,8 @@ $cUser =  $userQ->fetch();
 
 if($cUser)
 {
-    $admin = $cUser["Admin"];
-    $super = $cUser["Supervisor"];
+    // $admin = $cUser["Admin"];
+    // $super = $cUser["Supervisor"];
     
     if($search == 0) 
     {        
@@ -31,7 +31,6 @@ if($cUser)
         $conditions = "Date > $d AND available = 1";
         $orderRow   = "Date ASC, Start ASC, End ASC";
         $shiftQ = $conn->query("SELECT $rows FROM $tables WHERE $conditions ORDER BY $orderRow");
-        $shifts = $shiftQ -> fetchAll(PDO::FETCH_ASSOC);
     }
     else if($search == 1)
     {          
@@ -107,12 +106,57 @@ if($cUser)
             $orderRow .= " End $ascDesc, Date $ascDesc, Start $ascDesc";
         }
         
-        $shiftQ = $conn   -> query("SELECT $rows FROM $tables WHERE $conditions ORDER BY $orderRow");
-        $shifts = $shiftQ -> fetchAll(PDO::FETCH_ASSOC); 
+        $shiftQ = $conn -> query("SELECT $rows FROM $tables WHERE $conditions ORDER BY $orderRow");
     }
-    if($shifts)
+
+    $avShifts = $shiftQ -> fetchAll(PDO::FETCH_ASSOC);
+
+    $rows       = "SHIFTS.ShiftID, SHIFTS.userID, SHIFTS.Date,SHIFTS.Start,SHIFTS.End,SHIFTS.Available,SHIFTS.Supervisor,USERS.Firstname,USERS.Surname";
+    $tables     = "SHIFTS INNER JOIN USERS ON SHIFTS.userID = USERS.userID";
+    $conditions = "SHIFTS.userID = $userID";
+    $orderRow   = "Date ASC, Start ASC, End ASC";
+    $shiftQ = $conn->query("SELECT $rows FROM $tables WHERE $conditions ORDER BY $orderRow");
+
+    $currentShifts = $shiftQ -> fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($currentShifts as $key => $cValue) 
     {
-        echo json_encode($shifts);
+        $cDate    = strtotime($cValue["Date"]);
+        $cShiftID = $cValue["ShiftID"];
+        $cStart   = strtotime($cValue["Start"]);
+        $cEnd     = strtotime($cValue["End"]);
+    
+        foreach ($avShifts as $key => $aValue) 
+        {
+            $aDate    = strtotime($aValue["Date"]);
+            $aShiftID = $aValue["ShiftID"];
+            $aStart   = strtotime($aValue["Start"]);
+            $aEnd     = strtotime($aValue["End"]);
+    
+            if($cShiftID != $aShiftID)
+            {
+                if($aDate == $cDate)
+                {
+                    if (($cStart <= $aEnd) && ($cEnd >= $aStart))
+                    {
+                        echo  $cValue["ShiftID"]. " - " .$aValue["ShiftID"]."<br>";
+                        
+                        unset($avShifts[$key]);
+                    }
+                }
+            }
+        }
+    } 
+
+
+
+
+
+
+
+    if($avShifts)
+    {
+        echo json_encode($avShifts);
     }
     else
     {
